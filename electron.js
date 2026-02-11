@@ -9,7 +9,8 @@ const fs = require('fs-extra');
 
 // --- LOGGER ---
 const logPath = path.join(__dirname, 'APP_LOG.txt');
-function log(msg) { try { fs.appendFileSync(logPath, `[${new Date().toISOString()}] ${msg}\n`); } catch (e) { } }
+function log(msg) { try { fs.appendFileSync(logPath, `[${new Date().toISOString()}] ${msg}\n`); } catch (e) { console.error(e); } }
+
 
 
 let win;
@@ -79,7 +80,7 @@ app.whenReady().then(async () => {
         try {
             // These modules are currently missing from the root, wrapping in try/catch to prevent crashes.
             // When restored, they will load here.
-            
+
             // const RG = require('./report-generator');
             // global.ReportGenerator = RG;
             // log('Modulo Reportes: ACTIVO');
@@ -87,9 +88,9 @@ app.whenReady().then(async () => {
             // const OCR = require('./ocr-processor');
             // global.OCRProcessor = OCR;
             // log('Modulo OCR: ACTIVO');
-            
-             // Warn about missing modules in log
-             log('ADVERTENCIA: Modulos ReportGenerator y OCRProcessor no encontrados. Funcionalidades limitadas.');
+
+            // Warn about missing modules in log
+            log('ADVERTENCIA: Modulos ReportGenerator y OCRProcessor no encontrados. Funcionalidades limitadas.');
 
         } catch (e) { log('Error cargando modulos background: ' + e.message); }
     }, 1500);
@@ -241,10 +242,10 @@ ipcMain.handle('obtener-documentos', (event, proyectoId) => {
 ipcMain.handle('agregar-documento', async (event, doc) => {
     try {
         const sourcePath = doc.archivo ? doc.archivo.path : doc.ruta;
-        
+
         // 1. Validar que el archivo existe
         if (!sourcePath || !fs.existsSync(sourcePath)) {
-             throw new Error('El archivo original no existe o la ruta es inválida.');
+            throw new Error('El archivo original no existe o la ruta es inválida.');
         }
 
         const fileName = path.basename(sourcePath);
@@ -270,13 +271,13 @@ ipcMain.handle('agregar-documento', async (event, doc) => {
 });
 
 // Legacy support - redirige a agregar-documento
-ipcMain.handle('subir-documento', (event, doc) => { 
+ipcMain.handle('subir-documento', (event, doc) => {
     // Llamamos manualmente al handler actualizado
     // Nota: Invocar handlers IPC internamente es complicado sin pasar por el evento.
     // Mejor lógica compartida o simplemente usar el nuevo handler en el frontend.
     // Por ahora, mantenemos la implementación antigua 'insegura' o la redirigimos si podemos.
     // Redirigiremos la lógica 'segura' aquí duplicando la llamada a db por simplicidad si no requiere copia:
-    return { success: true, data: db.agregarDocumento(doc) }; 
+    return { success: true, data: db.agregarDocumento(doc) };
 });
 
 
@@ -333,7 +334,7 @@ ipcMain.handle('obtener-estadisticas', async () => {
 // ==================== NOTIFICACIONES ====================
 ipcMain.handle('obtener-alertas-pendientes', async () => {
     try {
-        if (!db) return { success: false, data: [] }; 
+        if (!db) return { success: false, data: [] };
         // Use the method exposed in database.js
         const alertas = db.obtenerAlertasPendientes();
         return { success: true, data: alertas || [] };
