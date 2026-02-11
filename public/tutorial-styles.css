@@ -1,0 +1,313 @@
+/* ================================================
+   TUTORIAL STYLES - TRAMITOLOGIA CDMX
+   Estilos para el Sistema de Tutorial Interactivo
+   ================================================ */
+
+/* Overlay semi-transparente */
+.tutorial-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(2px);
+    z-index: 9998;
+    animation: tutorialFadeIn 0.3s ease;
+}
+
+.tutorial-overlay-hide {
+    animation: tutorialFadeOut 0.3s ease;
+}
+
+@keyframes tutorialFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes tutorialFadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+/* Tooltip flotante */
+.tutorial-tooltip {
+    position: fixed;
+    z-index: 9999;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    max-width: 400px;
+    width: 90vw;
+    opacity: 0;
+    transform: scale(0.95);
+    transition: all 0.2s ease;
+    pointer-events: auto;
+}
+
+.tutorial-tooltip-visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Header del tooltip */
+.tutorial-tooltip-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.tutorial-tooltip-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.4;
+}
+
+.tutorial-close-btn {
+    background: none;
+    border: none;
+    font-size: 28px;
+    line-height: 1;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.tutorial-close-btn:hover {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+/* Contenido del tooltip */
+.tutorial-tooltip-content {
+    padding: 20px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #475569;
+}
+
+/* Footer con controles */
+.tutorial-tooltip-footer {
+    padding: 16px 20px 20px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+/* Progreso */
+.tutorial-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tutorial-progress-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.tutorial-progress-text .current {
+    color: #1e3a8a;
+    font-weight: 700;
+}
+
+/* Controles */
+.tutorial-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tutorial-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.tutorial-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.tutorial-btn-skip {
+    background: transparent;
+    color: #64748b;
+}
+
+.tutorial-btn-skip:hover:not(:disabled) {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.tutorial-btn-previous {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.tutorial-btn-previous:hover:not(:disabled) {
+    background: #e2e8f0;
+}
+
+.tutorial-btn-primary {
+    background: #1e3a8a;
+    color: white;
+}
+
+.tutorial-btn-primary:hover:not(:disabled) {
+    background: #1e40af;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+/* Flecha del tooltip */
+.tutorial-arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    display: none;
+}
+
+.tutorial-arrow-left {
+    display: block;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 10px 10px 10px 0;
+    border-color: transparent white transparent transparent;
+}
+
+.tutorial-arrow-right {
+    display: block;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 10px 0 10px 10px;
+    border-color: transparent transparent transparent white;
+}
+
+.tutorial-arrow-top {
+    display: block;
+    left: 50%;
+    top: -10px;
+    transform: translateX(-50%);
+    border-width: 0 10px 10px 10px;
+    border-color: transparent transparent white transparent;
+}
+
+.tutorial-arrow-bottom {
+    display: block;
+    left: 50%;
+    bottom: -10px;
+    transform: translateX(-50%);
+    border-width: 10px 10px 0 10px;
+    border-color: white transparent transparent transparent;
+}
+
+/* Resaltado de elementos */
+.tutorial-highlight {
+    position: relative;
+    z-index: 9997;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4), 0 0 0 8px rgba(59, 130, 246, 0.2);
+    border-radius: 8px;
+    animation: tutorialPulse 2s infinite;
+}
+
+@keyframes tutorialPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4), 0 0 0 8px rgba(59, 130, 246, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.5), 0 0 0 12px rgba(59, 130, 246, 0.3);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tutorial-tooltip {
+        max-width: calc(100vw - 32px);
+        left: 16px !important;
+        right: 16px !important;
+        bottom: 16px !important;
+        top: auto !important;
+        transform: none !important;
+    }
+
+    .tutorial-tooltip-visible {
+        transform: none !important;
+    }
+
+    .tutorial-tooltip-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .tutorial-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .tutorial-btn {
+        flex: 1;
+    }
+
+    .tutorial-arrow {
+        display: none !important;
+    }
+}
+
+/* Botón para reiniciar tutorial */
+.restart-tutorial-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.restart-tutorial-btn:hover {
+    background: #2563eb;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.restart-tutorial-btn:active {
+    transform: scale(0.98);
+}

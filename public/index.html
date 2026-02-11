@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRAMITOLOGIA CDMX - Sistema Profesional de Gestión</title>
+
+  <!-- Google Fonts - Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles-views.css">
+  <link rel="stylesheet" href="styles-views-v2.css">
+  <link rel="stylesheet" href="macro-juridico-styles.css">
+  <link rel="stylesheet" href="tutorial-styles.css">
+</head>
+
+<body>
+  <div id="root">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="logo">
+        <span class="logo-icon">🏛️</span>
+        <div class="logo-brand">
+          <span class="logo-text" style="color: #00ff00 !important;">TRAMITOLOGIA - CORREGIDO</span>
+          <span class="logo-subtitle">CDMX</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <!-- Sección Principal -->
+        <div class="nav-section">
+          <div class="nav-section-title">Principal</div>
+          <a href="#" class="nav-item active" data-view="dashboard">
+            <span class="nav-icon">📊</span>
+            <span class="nav-text">Dashboard</span>
+          </a>
+          <a href="#" class="nav-item" data-view="proyectos">
+            <span class="nav-icon">📁</span>
+            <span class="nav-text">Proyectos</span>
+            <span class="nav-badge">12</span>
+          </a>
+          <a href="#" class="nav-item" data-view="tareas">
+            <span class="nav-icon">✅</span>
+            <span class="nav-text">Tareas</span>
+            <span class="nav-badge">8</span>
+          </a>
+        </div>
+
+        <!-- Sección Gestión -->
+        <div class="nav-section">
+          <div class="nav-section-title">Gestión</div>
+          <a href="#" class="nav-item" data-view="tiempo">
+            <span class="nav-icon">⏱️</span>
+            <span class="nav-text">Tiempo</span>
+          </a>
+          <a href="#" class="nav-item" data-view="documentos">
+            <span class="nav-icon">📄</span>
+            <span class="nav-text">Documentos</span>
+          </a>
+          <a href="#" class="nav-item" data-view="ocr">
+            <span class="nav-icon">🔍</span>
+            <span class="nav-text">OCR</span>
+          </a>
+        </div>
+
+        <!-- Sección Cumplimiento -->
+        <div class="nav-section">
+          <div class="nav-section-title">Cumplimiento</div>
+          <a href="#" class="nav-item" data-view="checklists">
+            <span class="nav-icon">📋</span>
+            <span class="nav-text">Auditorías</span>
+          </a>
+          <a href="#" class="nav-item" data-view="alertas">
+            <span class="nav-icon">🔔</span>
+            <span class="nav-text">Alertas</span>
+            <span class="nav-badge">3</span>
+          </a>
+        </div>
+
+        <!-- Sección Análisis -->
+        <div class="nav-section">
+          <div class="nav-section-title">Análisis</div>
+          <a href="#" class="nav-item" data-view="reportes">
+            <span class="nav-icon">📈</span>
+            <span class="nav-text">Reportes</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="sidebar-toggle" id="sidebarToggle">
+          <span>◀</span>
+          <span class="nav-text">Contraer</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <!-- Window Controls -->
+        <div class="window-controls">
+          <div class="app-region-drag"></div>
+          <button class="win-btn min" id="btnMin" title="Minimizar">─</button>
+          <button class="win-btn max" id="btnMax" title="Maximizar">□</button>
+          <button class="win-btn close" id="btnClose" title="Cerrar">×</button>
+        </div>
+
+        <div class="topbar-search">
+          <span class="topbar-search-icon">🔍</span>
+          <input type="text" placeholder="Buscar proyectos, tareas, documentos..." id="globalSearch">
+        </div>
+
+        <div class="topbar-actions">
+          <button class="topbar-btn" id="btnNotifications">
+            <span>🔔</span>
+            <span class="topbar-btn-badge" style="display: none;"></span>
+          </button>
+
+          <button class="topbar-btn" id="btnSettings">
+            <span>⚙️</span>
+            <span>Configuración</span>
+          </button>
+
+          <div class="user-menu" id="userMenu">
+            <div class="user-avatar">AD</div>
+            <span>Administrador</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <div class="content-area" id="contentArea">
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Cargando aplicación...</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="themes.js"></script>
+  <script src="app.js"></script>
+  <script src="ocr-ui.js"></script>
+  <script src="checklist-template.js"></script>
+  <script src="checklists-ui.js"></script>
+  <script src="marco-juridico-ui.js"></script>
+  <script src="file-organizer-ui.js"></script>
+  <script src="configuracion-ui.js"></script>
+  <script src="proyectos-ui.js"></script>
+  <script src="tareas-ui.js"></script>
+  <script src="documentos-ui.js"></script>
+  <script src="reportes-ui.js"></script>
+  <script src="bug-fixes.js"></script>
+  <script src="test-suite.js"></script>
+  <script src="macro-juridico-tests.js"></script>
+  <script src="learning-system-ui.js"></script>
+  <script src="chatbot-ui.js"></script>
+  <script src="performance-ui.js"></script>
+  <script src="utilidades.js"></script>
+  <script src="dashboard-ui.js"></script>
+  <script src="notification-system.js"></script>
+
+  <!-- Menu actions handler -->
+  <script src="menu-actions.js"></script>
+
+  <script>
+    // Inicializar aplicación cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('🚀 Iniciando Gestor Virtual...');
+
+      // Cargar dashboard automáticamente
+      setTimeout(() => {
+        if (typeof mostrarDashboard === 'function') {
+          mostrarDashboard();
+          console.log('✅ Dashboard cargado');
+        } else {
+          console.error('❌ Función mostrarDashboard no encontrada');
+        }
+      }, 300);
+    });
+  </script>
+
+  <!-- Botón de Testing (solo desarrollo) -->
+  <script>
+    // Agregar botón flotante para ejecutar tests
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      window.addEventListener('load', () => {
+        const btnTest = document.createElement('button');
+        btnTest.innerHTML = '🧪 Tests';
+        btnTest.style.cssText = `
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          z-index: 10000;
+          padding: 12px 20px;
+          background: #e94560;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          font-weight: 600;
+          box-shadow: 0 4px 12px rgba(233, 69, 96, 0.3);
+        `;
+        btnTest.onclick = () => {
+          if (confirm('¿Ejecutar suite completa de pruebas? Esto puede tardar unos segundos.')) {
+            ejecutarTests();
+          }
+        };
+        document.body.appendChild(btnTest);
+      });
+    }
+  </script>
+  <script>
+    // Inicializar aplicación
+    document.addEventListener('DOMContentLoaded', () => {
+      // Aplicar tema guardado
+      configManager.aplicarTema();
+
+      // Inicializar navegación
+      initNavigation();
+
+      // Inicializar sidebar toggle
+      initSidebarToggle();
+
+      // Cargar vista inicial
+      cargarDatos().then(() => {
+        mostrarDashboard();
+      });
+    });
+
+    function initNavigation() {
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.preventDefault();
+          const view = item.dataset.view;
+
+          // Actualizar active
+          document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+          item.classList.add('active');
+
+          // Cambiar vista
+          cambiarVista(view);
+        });
+      });
+    }
+
+    function initSidebarToggle() {
+      const sidebar = document.getElementById('sidebar');
+      const toggle = document.getElementById('sidebarToggle');
+
+      toggle.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+        const icon = toggle.querySelector('span:first-child');
+        icon.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
+      });
+    }
+
+    // Botón de configuración
+    document.getElementById('btnSettings').addEventListener('click', () => {
+      mostrarConfiguracion();
+    });
+
+    // Búsqueda global
+    document.getElementById('globalSearch').addEventListener('input', (e) => {
+      realizarBusquedaGlobal(e.target.value);
+    });
+  </script>
+
+  <script>
+    // Document Ready
+    document.addEventListener('DOMContentLoaded', () => {
+      // Window Controls
+      document.getElementById('btnMin')?.addEventListener('click', () => window.electronAPI.minimizeWindow());
+      document.getElementById('btnMax')?.addEventListener('click', () => window.electronAPI.maximizeWindow());
+      document.getElementById('btnClose')?.addEventListener('click', () => window.electronAPI.closeWindow());
+    });
+  </script>
+
+  <!-- Tutorial System -->
+  <script src="tutorial.js"></script>
+</body>
+
+</html>

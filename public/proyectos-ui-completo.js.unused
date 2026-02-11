@@ -1,0 +1,147 @@
+// ==================== PROYECTOS UI ====================
+
+async function mostrarProyectos() {
+    console.log('📁 Cargando Proyectos...');
+
+    const contentArea = document.getElementById('contentArea');
+
+    contentArea.innerHTML = `
+        <div class="section-container">
+            <div class="section-header">
+                <h1>📁 Proyectos</h1>
+                <button class="btn btn-primary" onclick="abrirFormularioProyecto()">
+                    ➕ Nuevo Proyecto
+                </button>
+            </div>
+            <div class="cards-grid" id="proyectosGrid">
+                <div class="empty-state">
+                    <p>Cargando proyectos...</p>
+                </div>
+            </div>
+        </div>
+    `;
+
+    await cargarProyectos();
+}
+
+async function cargarProyectos() {
+    try {
+        const resultado = await window.electronAPI.obtenerProyectos();
+        const grid = document.getElementById('proyectosGrid');
+
+        if (resultado.success && resultado.data && resultado.data.length > 0) {
+            grid.innerHTML = resultado.data.map(proyecto => `
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">${escaparHTML(proyecto.nombre)}</h3>
+                        <span class="card-badge badge-${proyecto.estado}">${proyecto.estado}</span>
+                    </div>
+                    <p class="card-description">${escaparHTML(proyecto.descripcion || 'Sin descripción')}</p>
+                    <div class="card-meta">
+                        <span>📅 ${formatearFechaCorta(proyecto.fecha_creacion)}</span>
+                        <span>👤 ${escaparHTML(proyecto.cliente || 'Sin cliente')}</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-secondary" onclick="editarProyecto(${proyecto.id})">✏️ Editar</button>
+                        <button class="btn btn-danger" onclick="eliminarProyecto(${proyecto.id})">🗑️ Eliminar</button>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            grid.innerHTML = `
+                <div class="empty-state" style="grid-column: 1/-1;">
+                    <div class="empty-state-icon">📁</div>
+                    <h3>No hay proyectos</h3>
+                    <p>Crea tu primer proyecto para comenzar</p>
+                    <button class="btn btn-primary" onclick="abrirFormularioProyecto()">➕ Crear Proyecto</button>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarToast('Error al cargar proyectos', 'error');
+    }
+}
+
+function abrirFormularioProyecto(proyecto = null) {
+    const esEdicion = proyecto !== null;
+    const contenido = `
+        <form id="formProyecto" onsubmit="guardarProyecto(event, ${esEdicion ? proyecto.id : 'null'})">
+            <div class="form-group">
+                <label class="form-label">Nombre del Proyecto *</label>
+                <input type="text" class="form-input" name="nombre" value="${proyecto?.nombre || ''}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Cliente</label>
+                <input type="text" class="form-input" name="cliente" value="${proyecto?.cliente || ''}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Descripción</label>
+                <textarea class="form-textarea" name="descripcion">${proyecto?.descripcion || ''}</textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Estado</label>
+                <select class="form-select" name="estado">
+                    <option value="activo" ${proyecto?.estado === 'activo' ? 'selected' : ''}>Activo</option>
+                    <option value="pendiente" ${proyecto?.estado === 'pendiente' ? 'selected' : ''}>Pendiente</option>
+                    <option value="completado" ${proyecto?.estado === 'completado' ? 'selected' : ''}>Completado</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn btn-primary">${esEdicion ? 'Actualizar' : 'Crear'} Proyecto</button>
+            </div>
+        </form>
+    `;
+    abrirModal(esEdicion ? 'Editar Proyecto' : 'Nuevo Proyecto', contenido);
+}
+
+async function guardarProyecto(event, id = null) {
+    event.preventDefault();
+    const form = event.target;
+    const datos = {
+        nombre: form.nombre.value,
+        cliente: form.cliente.value,
+        descripcion: form.descripcion.value,
+        estado: form.estado.value
+    };
+
+    try {
+        let resultado;
+        if (id) {
+            resultado = await window.electronAPI.actualizarProyecto(id, datos);
+        } else {
+            resultado = await window.electronAPI.crearProyecto(datos);
+        }
+
+        if (resultado.success) {
+            cerrarModal();
+            mostrarToast(id ? 'Proyecto actualizado' : 'Proyecto creado', 'success');
+            await cargarProyectos();
+        } else {
+            mostrarToast('Error: ' + resultado.error, 'error');
+        }
+    } catch (error) {
+        mostrarToast('Error al guardar', 'error');
+    }
+}
+
+async function editarProyecto(id) {
+    const resultado = await window.electronAPI.obtenerProyectos();
+    if (resultado.success) {
+        const proyecto = resultado.data.find(p => p.id === id);
+        if (proyecto) abrirFormularioProyecto(proyecto);
+    }
+}
+
+function eliminarProyecto(id) {
+    confirmar('¿Estás seguro de eliminar este proyecto?', async () => {
+        const resultado = await window.electronAPI.eliminarProyecto(id);
+        if (resultado.success) {
+            mostrarToast('Proyecto eliminado', 'success');
+            await cargarProyectos();
+        }
+    });
+}
+
+console.log('✅ Proyectos UI cargado');
