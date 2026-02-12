@@ -78,20 +78,22 @@ app.whenReady().then(async () => {
     // 2. Cargar Modulos en Background
     setTimeout(() => {
         try {
-            // These modules are currently missing from the root, wrapping in try/catch to prevent crashes.
-            // When restored, they will load here.
+            // Check if modules exist before requiring to prevent crashes if files are missing
+            if (fs.existsSync(path.join(__dirname, 'report-generator.js'))) {
+                const RG = require('./report-generator');
+                global.ReportGenerator = RG;
+                log('Modulo Reportes: ACTIVO');
+            } else {
+                log('ADVERTENCIA: report-generator.js no encontrado. Funcionalidad de reportes deshabilitada.');
+            }
 
-            // const RG = require('./report-generator');
-            // global.ReportGenerator = RG;
-            // log('Modulo Reportes: ACTIVO');
-
-            // const OCR = require('./ocr-processor');
-            // global.OCRProcessor = OCR;
-            // log('Modulo OCR: ACTIVO');
-
-            // Warn about missing modules in log
-            log('ADVERTENCIA: Modulos ReportGenerator y OCRProcessor no encontrados. Funcionalidades limitadas.');
-
+            if (fs.existsSync(path.join(__dirname, 'ocr-processor.js'))) {
+                const OCR = require('./ocr-processor');
+                global.OCRProcessor = OCR;
+                log('Modulo OCR: ACTIVO');
+            } else {
+                log('ADVERTENCIA: ocr-processor.js no encontrado. Funcionalidad OCR deshabilitada.');
+            }
         } catch (e) { log('Error cargando modulos background: ' + e.message); }
     }, 1500);
 });
