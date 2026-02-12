@@ -8,6 +8,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     maximizeWindow: () => ipcRenderer.invoke('window-maximize'),
     closeWindow: () => ipcRenderer.invoke('window-close'),
 
+    // File Selection (Compatible with User's renderer)
+    selectFile: (options) => ipcRenderer.invoke('dialog:selectFile', options),
+    selectFiles: (options) => ipcRenderer.invoke('dialog:selectFiles', options),
+    saveFile: (options) => ipcRenderer.invoke('dialog:saveFile', options),
+
     // Dashboard & Estadísticas
     obtenerEstadisticas: () => ipcRenderer.invoke('obtener-estadisticas'),
     obtenerActividad: () => ipcRenderer.invoke('obtener-actividad'),
@@ -155,7 +160,84 @@ contextBridge.exposeInMainWorld('electronAPI', {
     onProgresoAnalisis: (callback) => ipcRenderer.on('progreso-analisis', (event, data) => callback(data)),
 
     // Menu actions
-    onMenuAction: (callback) => ipcRenderer.on('menu-action', (event, action) => callback(action))
+    onMenuAction: (callback) => ipcRenderer.on('menu-action', (event, action) => callback(action)),
+
+    // ==================== UNIFIED OCR SYSTEM ====================
+
+    // OCR & Image Processing
+    processOCR: (filePath, options) => ipcRenderer.invoke('ocr:process', filePath, options),
+    processImage: (imagePath, options) => ipcRenderer.invoke('ocr:processImage', imagePath, options),
+
+    // Batch Processing
+    batchAddJobs: (filePaths, options) => ipcRenderer.invoke('batch:addJobs', filePaths, options),
+    batchPause: () => ipcRenderer.invoke('batch:pause'),
+    batchResume: () => ipcRenderer.invoke('batch:resume'),
+    batchCancelJob: (jobId) => ipcRenderer.invoke('batch:cancelJob', jobId),
+    batchCancelAll: () => ipcRenderer.invoke('batch:cancelAll'),
+    batchGetStatistics: () => ipcRenderer.invoke('batch:getStatistics'),
+    batchGetAllJobs: () => ipcRenderer.invoke('batch:getAllJobs'),
+    batchExportResults: () => ipcRenderer.invoke('batch:exportResults'),
+
+    // Document Comparison
+    compareDocuments: (doc1Path, doc2Path) => ipcRenderer.invoke('comparison:compare', doc1Path, doc2Path),
+
+    // History
+    historySearch: (query, filters) => ipcRenderer.invoke('history:search', query, filters),
+    historyGetRecent: (limit) => ipcRenderer.invoke('history:getRecent', limit),
+    historyGetSummary: () => ipcRenderer.invoke('history:getSummary'),
+
+    // File Operations (Specific to OCR)
+    fileSave: (filePath, content) => ipcRenderer.invoke('file:save', filePath, content),
+    fileExists: (filePath) => ipcRenderer.invoke('file:exists', filePath),
+
+    // Events
+    onOCRProgress: (callback) => ipcRenderer.on('ocr:progress', (event, data) => callback(data)),
+    onBatchJobAdded: (callback) => ipcRenderer.on('batch:job-added', (event, data) => callback(data)),
+    onBatchJobStarted: (callback) => ipcRenderer.on('batch:job-started', (event, data) => callback(data)),
+    onBatchJobProgress: (callback) => ipcRenderer.on('batch:job-progress', (event, data) => callback(data)),
+    onBatchJobCompleted: (callback) => ipcRenderer.on('batch:job-completed', (event, data) => callback(data)),
+    onBatchJobFailed: (callback) => ipcRenderer.on('batch:job-failed', (event, data) => callback(data)),
+    onBatchJobCancelled: (callback) => ipcRenderer.on('batch:job-cancelled', (event, data) => callback(data)),
+    onBatchStarted: (callback) => ipcRenderer.on('batch:started', (event) => callback()),
+    onBatchCompleted: (callback) => ipcRenderer.on('batch:completed', (event, data) => callback(data)),
+    onBatchPaused: (callback) => ipcRenderer.on('batch:paused', (event) => callback()),
+    onBatchResumed: (callback) => ipcRenderer.on('batch:resumed', (event) => callback())
 });
 
+contextBridge.exposeInMainWorld('documentAPI', {
+    // Selección de archivos
+    selectFile: (options) => ipcRenderer.invoke('document:select-file', options),
+    selectMultipleFiles: (options) => ipcRenderer.invoke('document:select-multiple-files', options),
 
+    // Listado
+    obtenerDocumentos: (proyecto_id) => ipcRenderer.invoke('obtener-documentos', proyecto_id),
+
+    // CRUD básico
+    add: (documentData) => ipcRenderer.invoke('document:add', documentData),
+    addBatch: (documents) => ipcRenderer.invoke('document:add-batch', documents),
+    update: (data) => ipcRenderer.invoke('document:update', data),
+    updateMetadata: (data) => ipcRenderer.invoke('document:update-metadata', data),
+    delete: (data) => ipcRenderer.invoke('document:delete', data),
+    deleteBatch: (documents) => ipcRenderer.invoke('document:delete-batch', documents),
+
+    // Operaciones de archivo
+    open: (documentPath) => ipcRenderer.invoke('document:open', documentPath),
+    showInFolder: (documentPath) => ipcRenderer.invoke('document:show-in-folder', documentPath),
+    copyTo: (data) => ipcRenderer.invoke('document:copy-to', data),
+    moveToProject: (data) => ipcRenderer.invoke('document:move-to-project', data),
+
+    // Versiones
+    listVersions: (documentId) => ipcRenderer.invoke('document:list-versions', documentId),
+    restoreVersion: (data) => ipcRenderer.invoke('document:restore-version', data),
+
+    // Verificación
+    verifyIntegrity: (data) => ipcRenderer.invoke('document:verify-integrity', data),
+    checkExists: (documentPath) => ipcRenderer.invoke('document:check-exists', documentPath),
+
+    // Estadísticas
+    getStatistics: (projectId) => ipcRenderer.invoke('document:get-statistics', projectId),
+    getFileInfo: (filePath) => ipcRenderer.invoke('document:get-file-info', filePath),
+
+    // Lectura
+    readFile: (filePath) => ipcRenderer.invoke('document:read-file', filePath)
+});

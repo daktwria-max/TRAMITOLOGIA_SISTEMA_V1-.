@@ -1,0 +1,393 @@
+/* ==================== DOCUMENT VIEWER STYLES ==================== */
+
+.document-viewer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    background: #1e1e1e;
+    display: flex;
+    flex-direction: column;
+    color: #ffffff;
+}
+
+.document-viewer.light {
+    background: #f5f5f5;
+    color: #333333;
+}
+
+/* ==================== TOOLBAR ==================== */
+.viewer-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: #2d2d2d;
+    border-bottom: 1px solid #404040;
+    min-height: 60px;
+}
+
+.document-viewer.light .viewer-toolbar {
+    background: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.toolbar-left,
+.toolbar-center,
+.toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.toolbar-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: #ffffff;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.document-viewer.light .toolbar-btn {
+    color: #333333;
+}
+
+.toolbar-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.document-viewer.light .toolbar-btn:hover {
+    background: #f0f0f0;
+}
+
+.toolbar-btn:active {
+    transform: scale(0.95);
+}
+
+.toolbar-divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 0 0.5rem;
+}
+
+.document-viewer.light .toolbar-divider {
+    background: #e0e0e0;
+}
+
+.document-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ==================== CONTROLES ESPECÍFICOS ==================== */
+.page-indicator,
+.zoom-indicator,
+.font-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    padding: 0 0.5rem;
+}
+
+.page-input {
+    width: 50px;
+    padding: 0.25rem 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    color: #ffffff;
+    text-align: center;
+    font-size: 0.875rem;
+}
+
+.document-viewer.light .page-input {
+    background: #ffffff;
+    border-color: #e0e0e0;
+    color: #333333;
+}
+
+.page-input:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+/* ==================== CONTENIDO ==================== */
+.viewer-content {
+    flex: 1;
+    position: relative;
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ==================== LOADING ==================== */
+.viewer-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.document-viewer.light .viewer-loading {
+    color: #666666;
+}
+
+.loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* ==================== ERROR ==================== */
+.viewer-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.document-viewer.light .viewer-error {
+    color: #333333;
+}
+
+.viewer-error svg {
+    color: #ef4444;
+}
+
+.viewer-error h3 {
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.viewer-error p {
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+}
+
+.document-viewer.light .viewer-error p {
+    color: #666666;
+}
+
+/* ==================== INFO PANEL ==================== */
+.viewer-info {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    z-index: 10;
+}
+
+.document-viewer.light .viewer-info {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333333;
+}
+
+.info-content {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.8125rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ==================== PDF VIEWER ==================== */
+.pdf-container {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+}
+
+#pdfCanvas {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    max-width: 100%;
+    height: auto;
+}
+
+.pdf-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 3rem;
+    text-align: center;
+}
+
+.placeholder-icon {
+    font-size: 4rem;
+}
+
+.placeholder-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* ==================== IMAGE VIEWER ==================== */
+.image-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+#viewerImage {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+    user-select: none;
+}
+
+/* ==================== OFFICE VIEWER ==================== */
+.office-viewer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.office-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 3rem;
+    text-align: center;
+}
+
+/* ==================== TEXT VIEWER ==================== */
+.text-viewer {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding: 2rem;
+}
+
+#textContent {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.document-viewer.light #textContent {
+    background: #ffffff;
+    color: #333333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ==================== BOTONES ==================== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #2563eb;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+}
+
+.btn-secondary {
+    background: #64748b;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #475569;
+}
+
+/* ==================== UTILIDADES ==================== */
+.text-muted {
+    opacity: 0.7;
+}
+
+/* ==================== ANIMACIONES ==================== */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+    .viewer-toolbar {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .toolbar-center {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        padding-top: 0.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .document-title {
+        max-width: 150px;
+    }
+
+    .info-content {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    #viewerImage {
+        max-width: 100%;
+        max-height: 100%;
+    }
+}

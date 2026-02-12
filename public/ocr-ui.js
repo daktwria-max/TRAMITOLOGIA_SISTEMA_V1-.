@@ -1,594 +1,339 @@
-// ==================== VISTA DE OCR ====================
+/**
+ * OCR UI LOGIC
+ * Interfaz moderna para el sistema OCR
+ */
 
+// Estado global del OCR
+let currentOcrResults = null;
+
+/**
+ * Renderiza la vista principal del OCR
+ */
 function mostrarProcesadorOCR() {
   const html = `
-    <div class="header">
-      <div>
-        <h1>🔍 Procesador OCR</h1>
-        <p style="color: var(--color-texto-secundario); margin-top: 5px;">
-          Extrae texto e información de documentos escaneados
-        </p>
-      </div>
-      <div class="header-actions">
-        <button class="btn btn-secondary" onclick="mostrarHistorialOCR()">
-          📜 Historial
-        </button>
-        <button class="btn btn-primary" onclick="iniciarProcesamientoOCR()">
-          ➕ Procesar Documento
-        </button>
-      </div>
+    <div class="ocr-container">
+        <!-- Header -->
+        <div class="ocr-header">
+            <h1>🔍 KODIFICADOR OCR</h1>
+            <p>Procesamiento PDF 100% Offline</p>
+        </div>
+
+        <!-- Action Section -->
+        <div class="ocr-action-section">
+            <button id="btnSelectPdf" class="btn-ocr-select" onclick="window.selectAndProcessPdf()">
+                <span class="btn-icon">📄</span>
+                <span>SELECCIONAR ARCHIVO</span>
+            </button>
+        </div>
+
+        <!-- Progress Section -->
+        <div id="progressSection" class="ocr-progress-section">
+            <div class="ocr-progress-header">
+                <div class="ocr-progress-stage" id="progressStage">Preparando...</div>
+                <div class="ocr-progress-details" id="progressDetails">Iniciando procesamiento</div>
+            </div>
+            <div class="ocr-progress-bar-container">
+                <div class="ocr-progress-bar" id="progressBar" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMessage" class="ocr-error-message">
+            <div class="ocr-error-icon">⚠️</div>
+            <div class="ocr-error-title">Error de Procesamiento</div>
+            <div class="ocr-error-details" id="errorDetails"></div>
+        </div>
+
+        <!-- Results Card -->
+        <div id="resultsCard" class="ocr-results-card">
+            <div class="ocr-results-header">
+                <div class="ocr-results-title">📊 Resultados del Análisis</div>
+                <div class="ocr-confidence-badge">
+                    <span>✓</span>
+                    <span id="confidenceValue">85%</span>
+                </div>
+            </div>
+
+            <div class="ocr-result-item">
+                <div class="ocr-result-label">TIPO:</div>
+                <div class="ocr-result-value highlight" id="resultTipo">-</div>
+            </div>
+
+            <div class="ocr-result-item">
+                <div class="ocr-result-label">RAZÓN SOCIAL:</div>
+                <div class="ocr-result-value" id="resultRazon">-</div>
+            </div>
+
+            <div class="ocr-result-item">
+                <div class="ocr-result-label">FECHA:</div>
+                <div class="ocr-result-value" id="resultFecha">-</div>
+            </div>
+
+            <div class="ocr-result-item">
+                <div class="ocr-result-label">UBICACIÓN:</div>
+                <div class="ocr-result-value" id="resultUbicacion">-</div>
+            </div>
+
+            <div class="ocr-result-item">
+                <div class="ocr-result-label">RFC:</div>
+                <div class="ocr-result-value" id="resultRFC">-</div>
+            </div>
+
+            <div class="ocr-result-item">
+                <div class="ocr-result-label">FOLIO:</div>
+                <div class="ocr-result-value" id="resultFolio">-</div>
+            </div>
+
+            <div class="ocr-results-actions">
+                <button class="btn-ocr-action" onclick="window.exportarResultadosOCR()">
+                    💾 Exportar JSON
+                </button>
+                <button class="btn-ocr-action" onclick="window.copiarTextoOCRResult()">
+                    📋 Copiar Texto
+                </button>
+                <button class="btn-ocr-action" onclick="window.nuevoAnalisisOCR()">
+                    🔄 Nuevo Análisis
+                </button>
+            </div>
+        </div>
+        
+        <!-- Historial Link -->
+        <div style="text-align: center; margin-top: 2rem;">
+            <button class="btn btn-secondary" onclick="window.mostrarHistorialOCR()">
+                📜 Ver Historial
+            </button>
+        </div>
     </div>
-
-    <!-- Información del OCR -->
-    <div class="ocr-info-cards">
-      <div class="info-card">
-        <div class="info-card-icon">📄</div>
-        <div class="info-card-content">
-          <h3>Formatos Soportados</h3>
-          <p>JPG, PNG, PDF, TIFF, BMP</p>
-        </div>
-      </div>
-
-      <div class="info-card">
-        <div class="info-card-icon">🌐</div>
-        <div class="info-card-content">
-          <h3>Idioma</h3>
-          <p>Español (México)</p>
-        </div>
-      </div>
-
-      <div class="info-card">
-        <div class="info-card-icon">⚡</div>
-        <div class="info-card-content">
-          <h3>Procesamiento</h3>
-          <p>Local (sin internet)</p>
-        </div>
-      </div>
-
-      <div class="info-card">
-        <div class="info-card-icon">🔒</div>
-        <div class="info-card-content">
-          <h3>Privacidad</h3>
-          <p>100% Seguro</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Área de procesamiento -->
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">📋 Área de Procesamiento</h3>
-      </div>
-      <div class="card-body">
-        <div class="ocr-dropzone" id="ocrDropzone" onclick="seleccionarArchivoOCR()">
-          <div class="ocr-dropzone-content">
-            <div style="font-size: 64px; margin-bottom: 20px;">📄</div>
-            <h3>Arrastra un documento aquí</h3>
-            <p>o haz clic para seleccionar</p>
-            <small>Formatos: JPG, PNG, PDF (máx. 10MB)</small>
-          </div>
-        </div>
-
-        <div id="ocrResultado" style="display: none;">
-          <!-- Aquí se mostrará el resultado -->
-        </div>
-      </div>
-    </div>
-
-    <!-- Documentos procesados recientemente -->
-    <div class="card mt-xl">
-      <div class="card-header">
-        <h3 class="card-title">📚 Procesados Recientemente</h3>
-      </div>
-      <div class="card-body">
-        <div id="documentosRecientes">
-          ${renderizarDocumentosRecientes()}
-        </div>
-      </div>
-    </div>
-  `;
+    `;
 
   document.getElementById('contentArea').innerHTML = html;
-  configurarDragAndDropOCR();
 }
 
-// ==================== DRAG & DROP ====================
+// ==================== LÓGICA PRINCIPAL ====================
 
-function configurarDragAndDropOCR() {
-  const dropzone = document.getElementById('ocrDropzone');
-  if (!dropzone) return;
-
-  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    dropzone.addEventListener(eventName, preventDefaults, false);
-  });
-
-  function preventDefaults(e) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-
-  ['dragenter', 'dragover'].forEach(eventName => {
-    dropzone.addEventListener(eventName, () => {
-      dropzone.classList.add('ocr-dropzone-active');
-    }, false);
-  });
-
-  ['dragleave', 'drop'].forEach(eventName => {
-    dropzone.addEventListener(eventName, () => {
-      dropzone.classList.remove('ocr-dropzone-active');
-    }, false);
-  });
-
-  dropzone.addEventListener('drop', (e) => {
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      procesarArchivoOCR(files[0]);
-    }
-  }, false);
-}
-
-// ==================== SELECCIONAR ARCHIVO ====================
-
-async function seleccionarArchivoOCR() {
+window.selectAndProcessPdf = async function () {
   try {
-    const resultado = await window.electronAPI.seleccionarImagenOCR();
-
-    if (resultado.success) {
-      await procesarArchivoOCRPorRuta(resultado.ruta);
-    }
-  } catch (error) {
-    console.error('Error seleccionando archivo:', error);
-    sistemaNotificaciones.notificarError(
-      'Error',
-      'No se pudo seleccionar el archivo'
-    );
-  }
-}
-
-function procesarArchivoOCR(archivo) {
-  if (archivo && archivo.path) {
-    procesarArchivoOCRPorRuta(archivo.path);
-  } else {
-    sistemaNotificaciones.notificarError('Error', 'No se pudo obtener la ruta del archivo');
-  }
-}
-
-// ==================== PROCESAR ARCHIVO ====================
-
-async function procesarArchivoOCRPorRuta(rutaArchivo) {
-  const dropzone = document.getElementById('ocrDropzone');
-  const resultadoDiv = document.getElementById('ocrResultado');
-
-  // Mostrar loading
-  dropzone.style.display = 'none';
-  resultadoDiv.style.display = 'block';
-  resultadoDiv.innerHTML = `
-    <div class="ocr-loading">
-      <div class="spinner-large"></div>
-      <h3>Procesando documento...</h3>
-      <p>Esto puede tardar unos segundos</p>
-      <div class="ocr-progress">
-        <div class="ocr-progress-bar" id="ocrProgressBar"></div>
-      </div>
-    </div>
-  `;
-
-  try {
-    // Procesar con OCR
-    const resultado = await window.electronAPI.procesarDocumentoOCR(rutaArchivo);
-
-    if (resultado.success) {
-      mostrarResultadoOCR(resultado, rutaArchivo);
-      guardarEnHistorialOCR(resultado, rutaArchivo);
-
-      sistemaNotificaciones.notificarExito(
-        'Procesamiento Completo',
-        `Se extrajo texto con ${resultado.confianza.toFixed(1)}% de confianza`
-      );
-    } else {
-      throw new Error(resultado.error || 'Error procesando documento');
-    }
-  } catch (error) {
-    console.error('Error en OCR:', error);
-
-    resultadoDiv.innerHTML = `
-      <div class="ocr-error">
-        <div style="font-size: 64px; margin-bottom: 20px;">❌</div>
-        <h3>Error al Procesar</h3>
-        <p>${error.message}</p>
-        <button class="btn btn-primary" onclick="reiniciarOCR()">
-          Intentar Nuevamente
-        </button>
-      </div>
-    `;
-
-    sistemaNotificaciones.notificarError(
-      'Error en OCR',
-      error.message
-    );
-  }
-}
-
-// ==================== MOSTRAR RESULTADO ====================
-
-function mostrarResultadoOCR(resultado, rutaArchivo) {
-  const resultadoDiv = document.getElementById('ocrResultado');
-
-  resultadoDiv.innerHTML = `
-    <div class="ocr-resultado">
-      <!-- Header del resultado -->
-      <div class="ocr-resultado-header">
-        <div>
-          <h3>✅ Procesamiento Completado</h3>
-          <p>Confianza: <strong>${resultado.confianza.toFixed(1)}%</strong> • 
-             Palabras: <strong>${resultado.palabras}</strong> • 
-             Líneas: <strong>${resultado.lineas}</strong></p>
-        </div>
-        <div class="ocr-resultado-actions">
-          <button class="btn btn-sm btn-secondary" onclick="copiarTextoOCR()">
-            📋 Copiar Texto
-          </button>
-          <button class="btn btn-sm btn-secondary" onclick="exportarResultadoOCR()">
-            💾 Exportar
-          </button>
-          <button class="btn btn-sm btn-primary" onclick="reiniciarOCR()">
-            🔄 Procesar Otro
-          </button>
-        </div>
-      </div>
-
-      <!-- Tipo de documento detectado -->
-      ${resultado.tipoDocumento !== 'DESCONOCIDO' ? `
-        <div class="ocr-tipo-documento">
-          <span class="badge badge-info">
-            ${formatearTipoDocumento(resultado.tipoDocumento)}
-          </span>
-        </div>
-      ` : ''}
-
-      <!-- Datos extraídos -->
-      ${renderizarDatosExtraidos(resultado.datos, resultado.datosEspecificos)}
-
-      <!-- Texto completo -->
-      <div class="ocr-texto-completo">
-        <h4>📄 Texto Extraído</h4>
-        <div class="ocr-texto-container" id="textoOCR">
-          <pre>${resultado.texto}</pre>
-        </div>
-      </div>
-
-      <!-- Acciones adicionales -->
-      <div class="ocr-acciones-adicionales">
-        <button class="btn btn-secondary" onclick="crearProyectoDesdeOCR()">
-          📁 Crear Proyecto con estos Datos
-        </button>
-        <button class="btn btn-secondary" onclick="agregarAProyectoExistente()">
-          ➕ Agregar a Proyecto Existente
-        </button>
-      </div>
-    </div>
-  `;
-
-  // Guardar resultado globalmente para otras funciones
-  window.ultimoResultadoOCR = resultado;
-}
-
-function renderizarDatosExtraidos(datos, datosEspecificos) {
-  let html = '<div class="ocr-datos-extraidos">';
-
-  // Datos específicos del tipo de documento
-  if (datosEspecificos && Object.keys(datosEspecificos).length > 0) {
-    html += '<h4>🎯 Datos Específicos del Documento</h4>';
-    html += '<div class="datos-grid">';
-
-    Object.entries(datosEspecificos).forEach(([key, value]) => {
-      if (value) {
-        html += `
-          <div class="dato-item">
-            <span class="dato-label">${formatearClave(key)}</span>
-            <span class="dato-value">${value}</span>
-          </div>
-        `;
-      }
+    // Seleccionar archivo
+    const result = await window.documentAPI.selectFile({
+      title: 'Selecciona un documento para analizar',
+      filters: [
+        { name: 'Documentos', extensions: ['pdf', 'png', 'jpg', 'jpeg'] }
+      ]
     });
 
-    html += '</div>';
+    if (result.canceled) return;
+
+    const filePath = result.filePaths[0];
+    const extension = filePath.split('.').pop().toLowerCase();
+
+    // Ocultar error si existe
+    const errorEl = document.getElementById('errorMessage');
+    if (errorEl) errorEl.classList.remove('active');
+
+    // Deshabilitar botón
+    const btn = document.getElementById('btnSelectPdf');
+    if (btn) btn.disabled = true;
+
+    // Mostrar progreso
+    showOCRProgress();
+
+    // Procesar documento según tipo
+    let data;
+    if (['png', 'jpg', 'jpeg'].includes(extension)) {
+      data = await window.ocrAPI.processImage(filePath);
+    } else {
+      data = await window.ocrAPI.processDocument(filePath, (progress) => {
+        updateOCRProgress(progress);
+      });
+    }
+
+    // Mostrar resultados
+    showOCRResults(data, filePath);
+
+  } catch (error) {
+    console.error('Error:', error);
+    showOCRError(error.message);
+  } finally {
+    const btn = document.getElementById('btnSelectPdf');
+    if (btn) btn.disabled = false;
   }
+};
 
-  // Datos generales extraídos
-  html += '<h4>📊 Datos Generales Extraídos</h4>';
-  html += '<div class="datos-grid">';
+function showOCRProgress() {
+  const progressSection = document.getElementById('progressSection');
+  const resultsCard = document.getElementById('resultsCard');
 
-  if (datos.fechas && datos.fechas.length > 0) {
-    html += `
-      <div class="dato-item">
-        <span class="dato-label">📅 Fechas</span>
-        <span class="dato-value">${datos.fechas.join(', ')}</span>
-      </div>
-    `;
-  }
-
-  if (datos.emails && datos.emails.length > 0) {
-    html += `
-      <div class="dato-item">
-        <span class="dato-label">📧 Emails</span>
-        <span class="dato-value">${datos.emails.join(', ')}</span>
-      </div>
-    `;
-  }
-
-  if (datos.telefonos && datos.telefonos.length > 0) {
-    html += `
-      <div class="dato-item">
-        <span class="dato-label">📞 Teléfonos</span>
-        <span class="dato-value">${datos.telefonos.join(', ')}</span>
-      </div>
-    `;
-  }
-
-  if (datos.rfc && datos.rfc.length > 0) {
-    html += `
-      <div class="dato-item">
-        <span class="dato-label">🏢 RFC</span>
-        <span class="dato-value">${datos.rfc.join(', ')}</span>
-      </div>
-    `;
-  }
-
-  if (datos.direcciones && datos.direcciones.length > 0) {
-    html += `
-      <div class="dato-item">
-        <span class="dato-label">📍 Direcciones</span>
-        <span class="dato-value">${datos.direcciones.join(', ')}</span>
-      </div>
-    `;
-  }
-
-  html += '</div></div>';
-  return html;
+  if (progressSection) progressSection.classList.add('active');
+  if (resultsCard) resultsCard.classList.remove('active');
 }
 
-// ==================== ACCIONES ====================
-
-function copiarTextoOCR() {
-  const texto = window.ultimoResultadoOCR?.texto;
-  if (!texto) return;
-
-  navigator.clipboard.writeText(texto).then(() => {
-    sistemaNotificaciones.notificarExito(
-      'Texto Copiado',
-      'El texto se ha copiado al portapapeles'
-    );
-  }).catch(err => {
-    console.error('Error copiando texto:', err);
-    sistemaNotificaciones.notificarError(
-      'Error',
-      'No se pudo copiar el texto'
-    );
-  });
-}
-
-function exportarResultadoOCR() {
-  const resultado = window.ultimoResultadoOCR;
-  if (!resultado) return;
-
-  const datos = {
-    fecha: new Date().toISOString(),
-    confianza: resultado.confianza,
-    tipoDocumento: resultado.tipoDocumento,
-    texto: resultado.texto,
-    datosExtraidos: resultado.datos,
-    datosEspecificos: resultado.datosEspecificos
+function updateOCRProgress(progress) {
+  const stageNames = {
+    'pdf_conversion': 'Convirtiendo PDF a imágenes',
+    'ocr_processing': 'Procesando con OCR',
+    'data_extraction': 'Extrayendo datos estructurados',
+    'complete': 'Completado'
   };
 
-  const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `ocr_resultado_${Date.now()}.json`;
-  a.click();
+  const stageEl = document.getElementById('progressStage');
+  const detailsEl = document.getElementById('progressDetails');
+  const barEl = document.getElementById('progressBar');
+
+  if (stageEl) stageEl.textContent = stageNames[progress.stage] || 'Procesando...';
+
+  if (progress.page && detailsEl) {
+    detailsEl.textContent = `Página ${progress.page} de ${progress.totalPages}`;
+  }
+
+  if (barEl) {
+    const percentage = Math.round(progress.progress * 100);
+    barEl.style.width = percentage + '%';
+  }
+}
+
+function showOCRResults(data, filePath) {
+  currentOcrResults = { ...data, filePath };
+
+  document.getElementById('resultTipo').textContent = data.tipoDocumento || 'No detectado';
+  document.getElementById('resultRazon').textContent = data.razonSocial || 'No detectado';
+  document.getElementById('resultFecha').textContent = data.fecha || 'No detectado';
+  document.getElementById('resultUbicacion').textContent = data.ubicacion || 'No detectado';
+  document.getElementById('resultRFC').textContent = data.rfc || 'No detectado';
+  document.getElementById('resultFolio').textContent = data.folio || 'No detectado';
+
+  const confidence = Math.round((data.confianza || 0) * 100);
+  document.getElementById('confidenceValue').textContent = confidence + '%';
+
+  // Ocultar progreso y mostrar resultados
+  document.getElementById('progressSection').classList.remove('active');
+  document.getElementById('resultsCard').classList.add('active');
+}
+
+function showOCRError(message) {
+  const details = document.getElementById('errorDetails');
+  const msg = document.getElementById('errorMessage');
+
+  if (details) details.textContent = message;
+  if (msg) msg.classList.add('active');
+
+  document.getElementById('progressSection').classList.remove('active');
+}
+
+window.exportarResultadosOCR = function () {
+  if (!currentOcrResults) return;
+
+  const dataStr = JSON.stringify(currentOcrResults, null, 2);
+  const dataBlob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(dataBlob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `ocr-result-${Date.now()}.json`;
+  link.click();
+
   URL.revokeObjectURL(url);
+};
 
-  sistemaNotificaciones.notificarExito(
-    'Resultado Exportado',
-    'El resultado se ha guardado como JSON'
-  );
-}
+window.copiarTextoOCRResult = function () {
+  if (!currentOcrResults) return;
 
-function reiniciarOCR() {
-  document.getElementById('ocrDropzone').style.display = 'flex';
-  document.getElementById('ocrResultado').style.display = 'none';
-  document.getElementById('ocrResultado').innerHTML = '';
-  window.ultimoResultadoOCR = null;
-}
-
-async function crearProyectoDesdeOCR() {
-  const resultado = window.ultimoResultadoOCR;
-  if (!resultado) return;
-
-  // Pre-llenar formulario con datos extraídos
-  mostrarFormularioProyecto();
-
-  // Esperar a que se cree el modal
-  setTimeout(() => {
-    const form = document.querySelector('#modalFormularioProyecto form');
-    if (!form) return;
-
-    // Intentar llenar campos automáticamente
-    if (resultado.datosEspecificos?.establecimiento) {
-      const nombreInput = form.querySelector('[name="nombre"]');
-      if (nombreInput) nombreInput.value = resultado.datosEspecificos.establecimiento;
+  const texto = currentOcrResults.textoCompleto;
+  navigator.clipboard.writeText(texto).then(() => {
+    // Usar sistema de notificaciones si existe, sino alert
+    if (window.sistemaNotificaciones) {
+      window.sistemaNotificaciones.notificarExito('Texto Copiado', 'Texto copiado al portapapeles');
+    } else {
+      alert('Texto copiado al portapapeles');
     }
-
-    if (resultado.datos.direcciones && resultado.datos.direcciones.length > 0) {
-      const direccionInput = form.querySelector('[name="direccion"]');
-      if (direccionInput) direccionInput.value = resultado.datos.direcciones[0];
-    }
-
-    sistemaNotificaciones.notificarInfo(
-      'Datos Pre-llenados',
-      'Revisa y completa la información del proyecto'
-    );
-  }, 500);
-}
-
-function agregarAProyectoExistente() {
-  // Mostrar selector de proyecto y agregar como nota
-  sistemaNotificaciones.notificarInfo(
-    'Función en Desarrollo',
-    'Esta función estará disponible próximamente'
-  );
-}
-
-// ==================== HISTORIAL ====================
-
-function guardarEnHistorialOCR(resultado, rutaArchivo) {
-  let historial = JSON.parse(localStorage.getItem('historial_ocr') || '[]');
-
-  historial.unshift({
-    fecha: new Date().toISOString(),
-    archivo: rutaArchivo.split('/').pop(),
-    tipoDocumento: resultado.tipoDocumento,
-    confianza: resultado.confianza,
-    palabras: resultado.palabras,
-    resultado: resultado
   });
+};
 
-  // Mantener solo los últimos 20
-  historial = historial.slice(0, 20);
+window.nuevoAnalisisOCR = function () {
+  document.getElementById('resultsCard').classList.remove('active');
+  document.getElementById('progressSection').classList.remove('active');
+  currentOcrResults = null;
 
-  localStorage.setItem('historial_ocr', JSON.stringify(historial));
-}
+  // Reset inputs if there were any, mainly visual reset
+  document.getElementById('progressBar').style.width = '0%';
+  document.getElementById('progressStage').textContent = 'Preparando...';
+};
 
-function renderizarDocumentosRecientes() {
-  const historial = JSON.parse(localStorage.getItem('historial_ocr') || '[]');
+// ==================== HISTORIAL (Backend) ====================
 
-  if (historial.length === 0) {
-    return `
-      <div class="empty-state-small">
-        <p>No hay documentos procesados recientemente</p>
-      </div>
-    `;
-  }
+window.mostrarHistorialOCR = async function () {
+  try {
+    const historial = await window.ocrAPI.getHistory(20);
 
-  return `
-    <div class="documentos-recientes-lista">
-      ${historial.slice(0, 5).map(item => `
-        <div class="documento-reciente-item">
-          <div class="documento-reciente-icon">📄</div>
-          <div class="documento-reciente-info">
-            <strong>${item.archivo}</strong>
-            <p>${formatearFecha(item.fecha)} • Confianza: ${item.confianza.toFixed(1)}%</p>
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.id = 'modalHistorialOCR';
+
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 800px;">
+          <div class="modal-header">
+            <h2>📜 Historial de OCR</h2>
+            <button class="close-btn" onclick="document.getElementById('modalHistorialOCR').remove()">×</button>
           </div>
-          <span class="badge badge-info">${formatearTipoDocumento(item.tipoDocumento)}</span>
-          <button class="btn btn-sm btn-secondary" onclick="verResultadoOCRHistorial('${item.fecha}')">
-            Ver
-          </button>
-        </div>
-      `).join('')}
-    </div>
-  `;
-}
+          
+          <div class="modal-body">
+            ${historial && historial.length > 0 ? `
+              <div class="historial-ocr-lista">
+                ${historial.map(item => {
+      const data = {
+        tipoDocumento: item.tipo_documento,
+        razonSocial: item.razon_social,
+        fecha: item.fecha,
+        ubicacion: item.ubicacion,
+        rfc: item.rfc,
+        folio: item.folio,
+        textoCompleto: item.texto_completo,
+        confianza: item.confianza
+      };
 
-function verResultadoOCRHistorial(fecha) {
-  const historial = JSON.parse(localStorage.getItem('historial_ocr') || '[]');
-  const item = historial.find(h => h.fecha === fecha);
+      // Escapar comillas para el JSON en el onclick
+      const dataSafe = JSON.stringify(data).replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+      const filePathSafe = item.file_path ? item.file_path.replace(/\\/g, "\\\\") : '';
 
-  if (item) {
-    window.ultimoResultadoOCR = item.resultado;
-    mostrarResultadoOCR(item.resultado, item.archivo);
-
-    // Scroll al resultado
-    document.getElementById('ocrResultado').scrollIntoView({ behavior: 'smooth' });
-  }
-}
-
-function mostrarHistorialOCR() {
-  const historial = JSON.parse(localStorage.getItem('historial_ocr') || '[]');
-
-  const modal = document.createElement('div');
-  modal.className = 'modal active';
-  modal.id = 'modalHistorialOCR';
-
-  modal.innerHTML = `
-    <div class="modal-content" style="max-width: 800px;">
-      <div class="modal-header">
-        <h2>📜 Historial de OCR</h2>
-        <button class="close-btn" onclick="cerrarModal('modalHistorialOCR')">×</button>
-      </div>
-      
-      <div class="modal-body">
-        ${historial.length > 0 ? `
-          <div class="historial-ocr-lista">
-            ${historial.map(item => `
-              <div class="historial-ocr-item">
-                <div class="historial-ocr-info">
-                  <strong>${item.archivo}</strong>
-                  <p>${formatearFecha(item.fecha)}</p>
-                  <div style="display: flex; gap: 10px; margin-top: 8px;">
-                    <span class="badge badge-info">${formatearTipoDocumento(item.tipoDocumento)}</span>
-                    <span class="badge badge-secondary">Confianza: ${item.confianza.toFixed(1)}%</span>
-                    <span class="badge badge-secondary">${item.palabras} palabras</span>
-                  </div>
-                </div>
-                <button class="btn btn-sm btn-primary" onclick="verResultadoOCRHistorial('${item.fecha}'); cerrarModal('modalHistorialOCR');">
-                  Ver Resultado
-                </button>
+      return `
+                      <div class="card mb-md p-md">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>${item.file_name}</strong>
+                                <p style="font-size: 0.9em; color: var(--text-secondary);">${new Date(item.processed_at).toLocaleString()}</p>
+                            </div>
+                            <button class="btn btn-sm btn-select-ocr" onclick='cargarDesdeHistorial(${dataSafe}, "${filePathSafe}")'>
+                                Ver Resultado
+                            </button>
+                        </div>
+                        <div style="margin-top: 5px; display: flex; gap: 10px;">
+                            <span class="badge badge-info">${item.tipo_documento || 'General'}</span>
+                            <span class="badge badge-success">${Math.round((item.confianza || 0) * 100)}%</span>
+                        </div>
+                      </div>
+                    `;
+    }).join('')}
               </div>
-            `).join('')}
+            ` : `
+              <div style="text-align: center; padding: 2rem;">
+                <p>No hay documentos en el historial</p>
+              </div>
+            `}
           </div>
-        ` : `
-          <div class="empty-state-small">
-            <p>No hay documentos en el historial</p>
-          </div>
-        `}
-      </div>
-    </div>
-  `;
+        </div>
+      `;
 
-  document.body.appendChild(modal);
-}
+    document.body.appendChild(modal);
 
-// ==================== UTILIDADES ====================
-
-function formatearTipoDocumento(tipo) {
-  const tipos = {
-    'AVISO_FUNCIONAMIENTO': 'Aviso de Funcionamiento',
-    'POLIZA_SEGURO': 'Póliza de Seguro',
-    'DICTAMEN_TECNICO': 'Dictamen Técnico',
-    'PROGRAMA_INTERNO': 'Programa Interno',
-    'PERMISO': 'Permiso',
-    'DESCONOCIDO': 'Documento General'
-  };
-  return tipos[tipo] || tipo;
-}
-
-function formatearClave(clave) {
-  return clave
-    .replace(/([A-Z])/g, ' $1')
-    .replace(/^./, str => str.toUpperCase())
-    .trim();
-}
-
-function formatearFecha(fecha) {
-  const d = new Date(fecha);
-  return d.toLocaleDateString('es-MX', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-}
-
-function cerrarModal(modalId) {
-  const modal = document.getElementById(modalId);
-  if (modal) {
-    modal.classList.remove('active');
-    setTimeout(() => modal.remove(), 300);
+  } catch (error) {
+    console.error("Error cargando historial:", error);
+    alert("Error cargando el historial: " + error.message);
   }
-}
+};
 
-function iniciarProcesamientoOCR() {
-  seleccionarArchivoOCR();
-}
+window.cargarDesdeHistorial = function (data, filePath) {
+  document.getElementById('modalHistorialOCR').remove();
+  showOCRResults(data, filePath);
+};
+
+// Exportar globalmente
+window.mostrarProcesadorOCR = mostrarProcesadorOCR;

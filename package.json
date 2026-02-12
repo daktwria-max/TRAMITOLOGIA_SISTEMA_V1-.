@@ -1,18 +1,108 @@
 {
-    "name": "gestor-virtual",
-    "version": "1.0.0",
-    "description": "Sistema de Gestoria Virtual CDMX",
-    "main": "electron.js",
+    "name": "kodificador-ocr",
+    "version": "2.0.0",
+    "description": "Sistema OCR Completo Offline con Electron - Procesamiento de documentos PDF con reconocimiento óptico de caracteres",
+    "main": "main.js",
     "scripts": {
-        "start": "electron ."
+        "start": "electron .",
+        "dev": "NODE_ENV=development electron .",
+        "build": "electron-builder",
+        "build:win": "electron-builder --win",
+        "build:mac": "electron-builder --mac",
+        "build:linux": "electron-builder --linux",
+        "pack": "electron-builder --dir",
+        "dist": "electron-builder"
     },
+    "keywords": [
+        "ocr",
+        "electron",
+        "tesseract",
+        "pdf",
+        "offline",
+        "document-processing",
+        "batch-processing",
+        "document-comparison",
+        "proteccion-civil",
+        "kodificador"
+    ],
+    "author": {
+        "name": "KODIFICADOR",
+        "email": "daktwria@gmail.com"
+    },
+    "license": "MIT",
     "dependencies": {
-        "fs-extra": "^11.2.0",
-        "sql.js": "^1.10.0",
-        "pdf-lib": "^1.17.1",
-        "tesseract.js": "^5.0.0"
+        "tesseract.js": "^5.0.4",
+        "pdfjs-dist": "^3.11.174",
+        "canvas": "^2.11.2",
+        "better-sqlite3": "^9.2.2",
+        "diff": "^5.1.0",
+        "natural": "^6.10.4"
     },
     "devDependencies": {
-        "electron": "^28.0.0"
-    }
+        "electron": "^28.1.0",
+        "electron-builder": "^24.9.1"
+    },
+    "build": {
+        "appId": "com.kodificador.ocr",
+        "productName": "KODIFICADOR OCR",
+        "directories": {
+            "output": "dist",
+            "buildResources": "resources"
+        },
+        "files": [
+            "**/*",
+            "!**/*.md",
+            "!.git",
+            "!dist",
+            "!node_modules/tesseract.js/src",
+            "!node_modules/pdfjs-dist/build/pdf.worker.js.map"
+        ],
+        "extraResources": [
+            {
+                "from": "resources/tessdata",
+                "to": "tessdata",
+                "filter": [
+                    "**/*"
+                ]
+            }
+        ],
+        "win": {
+            "target": [
+                "nsis",
+                "portable"
+            ],
+            "icon": "resources/icon.ico"
+        },
+        "mac": {
+            "target": [
+                "dmg",
+                "zip"
+            ],
+            "icon": "resources/icon.icns",
+            "category": "public.app-category.productivity"
+        },
+        "linux": {
+            "target": [
+                "AppImage",
+                "deb"
+            ],
+            "icon": "resources/icon.png",
+            "category": "Office"
+        },
+        "nsis": {
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true,
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true,
+            "shortcutName": "KODIFICADOR OCR"
+        }
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/kodificador/ocr-system.git"
+    },
+    "bugs": {
+        "url": "https://github.com/kodificador/ocr-system/issues"
+    },
+    "homepage": "https://github.com/kodificador/ocr-system#readme"
 }

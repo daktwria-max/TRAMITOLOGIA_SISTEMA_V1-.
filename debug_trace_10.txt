@@ -1,0 +1,162 @@
+
+DEBUG: Electron process starting...
+DEBUG: Importing advanced modules...
+DEBUG: Advanced modules imported.
+[2026-02-11T06:12:31.023Z] [INFO] === Iniciando aplicación TRAMITOLOGIA (Modo Producción Avanzado) ===
+
+🔄 Inicializando base de datos (SQL.js)...
+📂 Cargando base de datos: C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\data\database.db
+📋 Creando esquema de base de datos...
+⚠️ Error en migración de proyectos.actualizado_en: Cannot read properties of undefined (reading '0')
+⚠️ Error en migración de proyectos.progreso: Cannot read properties of undefined (reading '0')
+⚠️ Error en migración de proyectos.etiquetas: Cannot read properties of undefined (reading '0')
+⚠️ Error en migración de tareas.actualizado_en: Cannot read properties of undefined (reading '0')
+⚠️ Error en migración de tareas.progreso: Cannot read properties of undefined (reading '0')
+⚠️ Error en migración de tareas.etiquetas: Cannot read properties of undefined (reading '0')
+⚠️ Error en migración de documentos.actualizado_en: Cannot read properties of undefined (reading '0')
+⚠️ Error en migración de documentos.hash: Cannot read properties of undefined (reading '0')
+✅ Esquema de base de datos creado/verificado
+✅ Base de datos inicializada correctamente
+⚠️ Módulos secundarios no disponibles: Cannot find module './marco-juridico-updater'
+Require stack:
+- C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js
+- C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js
+[2026-02-11T06:12:31.140Z] [INFO] Base de datos inicializada correctamente
+
+DEBUG: Initializing advanced modules...
+DEBUG: Initializing TransactionManager...
+[2026-02-11T06:12:31.142Z] [INFO] TransactionManager inicializado
+
+DEBUG: Initializing BackupManager...
+DEBUG: BackupManager path: C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\data\database.db
+[BackupManager] Respaldo automático iniciado (intervalo: 3600000ms)
+[2026-02-11T06:12:31.145Z] [INFO] BackupManager inicializado con respaldos automáticos
+
+[2026-02-11T06:12:31.146Z] [INFO] RateLimiter inicializado
+
+[15180:0211/001231.539:ERROR:cache_util_win.cc(20)] Unable to move the cache: Acceso denegado. (0x5)
+[15180:0211/001231.539:ERROR:cache_util_win.cc(20)] Unable to move the cache: Acceso denegado. (0x5)
+[15180:0211/001231.557:ERROR:disk_cache.cc(208)] Unable to create cache
+[15180:0211/001231.557:ERROR:gpu_disk_cache.cc(676)] Gpu Cache Creation failed: -2
+[15180:0211/001231.557:ERROR:disk_cache.cc(208)] Unable to create cache
+[15180:0211/001231.557:ERROR:gpu_disk_cache.cc(676)] Gpu Cache Creation failed: -2
+[BackupManager] Directorio de respaldos: C:\Users\kadatherion\AppData\Roaming\Electron\backups
+[2026-02-11T06:12:33.008Z] [WARN] Módulo reportGenerator no encontrado (report-generator.js)
+
+[2026-02-11T06:12:33.009Z] [WARN] Módulo ocrProcessor no encontrado (ocr-processor.js)
+
+[2026-02-11T06:12:33.017Z] [INFO] Módulo optimizer cargado exitosamente
+
+[2026-02-11T06:12:33.018Z] [INFO] === Aplicación completamente inicializada ===
+
+[BackupManager] Respaldo creado: backup_auto_2026-02-11T06-12-36-151Z (33ms)
+[2026-02-11T06:12:37.653Z] [INFO] Ventana principal mostrada
+
+[DB Error] prepare: no such column: actualizado_en
+[DB SQL]: SELECT * FROM proyectos WHERE 1=1 ORDER BY actualizado_en DESC
+[2026-02-11T06:12:37.728Z] [ERROR] Error obteniendo proyectos - Error preparando consulta: no such column: actualizado_en
+
+[2026-02-11T06:12:37.730Z] [STACK] Error: Error preparando consulta: no such column: actualizado_en
+    at DatabaseAdapter.prepare (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:296:13)
+    at DatabaseAdapter.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:320:17)
+    at DataRepository.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:764:20)
+    at Object.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:1124:40)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:353:40
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+    at WebContents.emit (node:events:517:28)
+
+[DB Error] prepare: no such column: actualizado_en
+[DB SQL]: SELECT * FROM proyectos WHERE 1=1 ORDER BY actualizado_en DESC
+[2026-02-11T06:12:37.737Z] [ERROR] Error obteniendo proyectos - Error preparando consulta: no such column: actualizado_en
+
+[2026-02-11T06:12:37.738Z] [STACK] Error: Error preparando consulta: no such column: actualizado_en
+    at DatabaseAdapter.prepare (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:296:13)
+    at DatabaseAdapter.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:320:17)
+    at DataRepository.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:764:20)
+    at Object.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:1124:40)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:353:40
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+    at WebContents.emit (node:events:517:28)
+
+[DB Error] prepare: no such column: t.actualizado_en
+[DB SQL]: 
+            SELECT t.*, p.nombre as proyecto_nombre 
+            FROM tareas t 
+            LEFT JOIN proyectos p ON t.proyecto_id = p.id 
+            WHERE 1=1
+         ORDER BY t.actualizado_en DES
+[2026-02-11T06:12:37.748Z] [ERROR] Error obteniendo tareas - Error preparando consulta: no such column: t.actualizado_en
+
+[2026-02-11T06:12:37.749Z] [STACK] Error: Error preparando consulta: no such column: t.actualizado_en
+    at DatabaseAdapter.prepare (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:296:13)
+    at DatabaseAdapter.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:320:17)
+    at DataRepository.obtenerTareas (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:837:20)
+    at Object.obtenerTareas (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:1130:37)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:400:40
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+    at WebContents.emit (node:events:517:28)
+
+[DB Error] prepare: no such column: t.actualizado_en
+[DB SQL]: 
+            SELECT t.*, p.nombre as proyecto_nombre 
+            FROM tareas t 
+            LEFT JOIN proyectos p ON t.proyecto_id = p.id 
+            WHERE 1=1
+         ORDER BY t.actualizado_en DES
+[2026-02-11T06:12:37.752Z] [ERROR] Error obteniendo tareas - Error preparando consulta: no such column: t.actualizado_en
+
+[2026-02-11T06:12:37.753Z] [STACK] Error: Error preparando consulta: no such column: t.actualizado_en
+    at DatabaseAdapter.prepare (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:296:13)
+    at DatabaseAdapter.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:320:17)
+    at DataRepository.obtenerTareas (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:837:20)
+    at Object.obtenerTareas (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:1130:37)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:400:40
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+    at WebContents.emit (node:events:517:28)
+
+[DB Error] prepare: no such column: actualizado_en
+[DB SQL]: SELECT * FROM proyectos WHERE 1=1 ORDER BY actualizado_en DESC
+[2026-02-11T06:12:37.813Z] [ERROR] Error obteniendo estadísticas - Error preparando consulta: no such column: actualizado_en
+
+[2026-02-11T06:12:37.814Z] [STACK] Error: Error preparando consulta: no such column: actualizado_en
+    at DatabaseAdapter.prepare (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:296:13)
+    at DatabaseAdapter.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:320:17)
+    at DataRepository.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:764:20)
+    at Object.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:1124:40)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:818:45
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+    at WebContents.emit (node:events:517:28)
+
+[DB Error] prepare: no such column: actualizado_en
+[DB SQL]: SELECT * FROM proyectos WHERE 1=1 ORDER BY actualizado_en DESC
+[2026-02-11T06:12:38.045Z] [ERROR] Error obteniendo estadísticas - Error preparando consulta: no such column: actualizado_en
+
+[2026-02-11T06:12:38.047Z] [STACK] Error: Error preparando consulta: no such column: actualizado_en
+    at DatabaseAdapter.prepare (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:296:13)
+    at DatabaseAdapter.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:320:17)
+    at DataRepository.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:764:20)
+    at Object.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:1124:40)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:818:45
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+    at WebContents.emit (node:events:517:28)
+
+[DB Error] prepare: no such column: actualizado_en
+[DB SQL]: SELECT * FROM proyectos WHERE 1=1 ORDER BY actualizado_en DESC
+[2026-02-11T06:12:38.092Z] [ERROR] Error obteniendo estadísticas - Error preparando consulta: no such column: actualizado_en
+
+[2026-02-11T06:12:38.093Z] [STACK] Error: Error preparando consulta: no such column: actualizado_en
+    at DatabaseAdapter.prepare (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:296:13)
+    at DatabaseAdapter.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:320:17)
+    at DataRepository.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:764:20)
+    at Object.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:1124:40)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:818:45
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+    at WebContents.emit (node:events:517:28)
+
+[2026-02-11T06:13:55.371Z] [INFO] Todas las ventanas cerradas
+
+[2026-02-11T06:13:55.386Z] [INFO] Cerrando aplicación y limpiando recursos...
+
+[BackupManager] Respaldo automático detenido
+[2026-02-11T06:13:55.390Z] [INFO] Recursos limpiados correctamente
+

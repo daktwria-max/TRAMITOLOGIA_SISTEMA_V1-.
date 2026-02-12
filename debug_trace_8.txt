@@ -1,0 +1,119 @@
+
+DEBUG: Electron process starting...
+DEBUG: Importing advanced modules...
+DEBUG: Advanced modules imported.
+[2026-02-11T06:03:43.888Z] [INFO] === Iniciando aplicación TRAMITOLOGIA (Modo Producción Avanzado) ===
+
+🔄 Inicializando base de datos (SQL.js)...
+📂 Cargando base de datos: C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\data\database.db
+📋 Creando esquema de base de datos...
+✅ Esquema de base de datos creado
+✅ Base de datos inicializada correctamente
+⚠️ Módulos secundarios no disponibles: Cannot find module './marco-juridico-updater'
+Require stack:
+- C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js
+- C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js
+[2026-02-11T06:03:44.045Z] [INFO] Base de datos inicializada correctamente
+
+DEBUG: Initializing advanced modules...
+DEBUG: Initializing TransactionManager...
+[2026-02-11T06:03:44.047Z] [INFO] TransactionManager inicializado
+
+DEBUG: Initializing BackupManager...
+DEBUG: BackupManager path: C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\data\database.db
+[BackupManager] Respaldo automático iniciado (intervalo: 3600000ms)
+[2026-02-11T06:03:44.049Z] [INFO] BackupManager inicializado con respaldos automáticos
+
+[2026-02-11T06:03:44.051Z] [INFO] RateLimiter inicializado
+
+[23416:0211/000344.164:ERROR:cache_util_win.cc(20)] Unable to move the cache: Acceso denegado. (0x5)
+[23416:0211/000344.165:ERROR:cache_util_win.cc(20)] Unable to move the cache: Acceso denegado. (0x5)
+[23416:0211/000344.169:ERROR:disk_cache.cc(208)] Unable to create cache
+[23416:0211/000344.169:ERROR:gpu_disk_cache.cc(676)] Gpu Cache Creation failed: -2
+[23416:0211/000344.169:ERROR:disk_cache.cc(208)] Unable to create cache
+[23416:0211/000344.169:ERROR:gpu_disk_cache.cc(676)] Gpu Cache Creation failed: -2
+[BackupManager] Directorio de respaldos: C:\Users\kadatherion\AppData\Roaming\Electron\backups
+[2026-02-11T06:03:45.658Z] [WARN] Módulo reportGenerator no encontrado (report-generator.js)
+
+[2026-02-11T06:03:45.659Z] [WARN] Módulo ocrProcessor no encontrado (ocr-processor.js)
+
+[2026-02-11T06:03:45.670Z] [INFO] Módulo optimizer cargado exitosamente
+
+[2026-02-11T06:03:45.671Z] [INFO] === Aplicación completamente inicializada ===
+
+[BackupManager] Respaldo creado: backup_auto_2026-02-11T06-03-49-055Z (16ms)
+[2026-02-11T06:03:50.485Z] [INFO] Ventana principal mostrada
+
+[2026-02-11T06:03:50.552Z] [ERROR] Error obteniendo proyectos - this.db.all is not a function
+
+[2026-02-11T06:03:50.557Z] [STACK] TypeError: this.db.all is not a function
+    at DataRepository.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:711:20)
+    at Object.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:1071:40)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:353:40
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+    at WebContents.emit (node:events:517:28)
+
+[2026-02-11T06:03:50.560Z] [ERROR] Error obteniendo proyectos - this.db.all is not a function
+
+[2026-02-11T06:03:50.561Z] [STACK] TypeError: this.db.all is not a function
+    at DataRepository.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:711:20)
+    at Object.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:1071:40)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:353:40
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+    at WebContents.emit (node:events:517:28)
+
+[2026-02-11T06:03:50.571Z] [ERROR] Error obteniendo tareas - this.db.all is not a function
+
+[2026-02-11T06:03:50.572Z] [STACK] TypeError: this.db.all is not a function
+    at DataRepository.obtenerTareas (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:784:20)
+    at Object.obtenerTareas (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:1077:37)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:400:40
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+    at WebContents.emit (node:events:517:28)
+
+[2026-02-11T06:03:50.574Z] [ERROR] Error obteniendo tareas - this.db.all is not a function
+
+[2026-02-11T06:03:50.575Z] [STACK] TypeError: this.db.all is not a function
+    at DataRepository.obtenerTareas (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:784:20)
+    at Object.obtenerTareas (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:1077:37)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:400:40
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+    at WebContents.emit (node:events:517:28)
+
+[2026-02-11T06:03:50.647Z] [ERROR] Error obteniendo estadísticas - this.db.all is not a function
+
+[2026-02-11T06:03:50.649Z] [STACK] TypeError: this.db.all is not a function
+    at DataRepository.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:711:20)
+    at Object.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:1071:40)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:818:45
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+    at WebContents.emit (node:events:517:28)
+
+[DB Error] obtenerActividadReciente: this.db.all is not a function
+[2026-02-11T06:03:50.877Z] [ERROR] Error obteniendo estadísticas - this.db.all is not a function
+
+[2026-02-11T06:03:50.879Z] [STACK] TypeError: this.db.all is not a function
+    at DataRepository.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:711:20)
+    at Object.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:1071:40)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:818:45
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+    at WebContents.emit (node:events:517:28)
+
+[DB Error] obtenerActividadReciente: this.db.all is not a function
+[2026-02-11T06:03:50.907Z] [ERROR] Error obteniendo estadísticas - this.db.all is not a function
+
+[2026-02-11T06:03:50.909Z] [STACK] TypeError: this.db.all is not a function
+    at DataRepository.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:711:20)
+    at Object.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:1071:40)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:818:45
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+    at WebContents.emit (node:events:517:28)
+
+[DB Error] obtenerActividadReciente: this.db.all is not a function
+[2026-02-11T06:05:32.271Z] [INFO] Todas las ventanas cerradas
+
+[2026-02-11T06:05:32.305Z] [INFO] Cerrando aplicación y limpiando recursos...
+
+[BackupManager] Respaldo automático detenido
+[2026-02-11T06:05:32.310Z] [INFO] Recursos limpiados correctamente
+

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KODIFICADOR OCR - Sistema Completo</title>
+    <!-- Use ocr-style.css as we don't have styles.css with OCR styles yet, or we will get it in next turn -->
+    <link rel="stylesheet" href="ocr-style.css">
+    <!-- Add styles-views.css etc just in case for base styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Window Controls -->
+    <div class="window-controls">
+        <button id="btnMinimize" class="win-btn">─</button>
+        <button id="btnMaximize" class="win-btn">□</button>
+        <button id="btnClose" class="win-btn close">×</button>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🔍 KODIFICADOR OCR</h1>
+            <p>Sistema Completo de Procesamiento Offline</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="single">📄 Procesamiento Individual</button>
+            <button class="tab" data-tab="batch">📦 Procesamiento por Lotes</button>
+            <button class="tab" data-tab="comparison">🔄 Comparación</button>
+            <button class="tab" data-tab="history">📚 Historial</button>
+        </div>
+
+        <!-- Single Processing Tab -->
+        <div id="singleTab" class="tab-content active">
+            <div class="section">
+                <div class="section-header">
+                    <h2>📄 Procesamiento Individual</h2>
+                    <button id="btnSelectPdf" class="btn btn-primary">Seleccionar PDF</button>
+                </div>
+
+                <div id="progressSection" class="progress-section">
+                    <div class="progress-header">
+                        <div class="progress-stage" id="progressStage">Preparando...</div>
+                        <div class="progress-details" id="progressDetails">Iniciando procesamiento</div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div id="errorMessage" class="error-message">
+                    <div class="error-icon">⚠️</div>
+                    <div class="error-title">Error de Procesamiento</div>
+                    <div class="error-details" id="errorDetails"></div>
+                </div>
+
+                <div id="resultsCard" class="results-card">
+                    <div class="results-header">
+                        <div class="results-title">📊 Resultados del Análisis</div>
+                        <div class="confidence-badge">
+                            <span>✓</span>
+                            <span id="confidenceValue">85%</span>
+                        </div>
+                    </div>
+
+                    <div class="result-item">
+                        <div class="result-label">TIPO:</div>
+                        <div class="result-value highlight" id="resultTipo">-</div>
+                    </div>
+
+                    <div class="result-item">
+                        <div class="result-label">RAZÓN SOCIAL:</div>
+                        <div class="result-value" id="resultRazon">-</div>
+                    </div>
+
+                    <div class="result-item">
+                        <div class="result-label">FECHA:</div>
+                        <div class="result-value" id="resultFecha">-</div>
+                    </div>
+
+                    <div class="result-item">
+                        <div class="result-label">UBICACIÓN:</div>
+                        <div class="result-value" id="resultUbicacion">-</div>
+                    </div>
+
+                    <div class="result-item">
+                        <div class="result-label">RFC:</div>
+                        <div class="result-value" id="resultRFC">-</div>
+                    </div>
+
+                    <div class="result-item">
+                        <div class="result-label">FOLIO:</div>
+                        <div class="result-value" id="resultFolio">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Batch Processing Tab -->
+        <div id="batchTab" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <h2>📦 Procesamiento por Lotes</h2>
+                    <div class="header-actions">
+                        <button id="btnSelectMultiple" class="btn btn-primary">Seleccionar PDFs</button>
+                        <button id="btnPauseBatch" class="btn btn-secondary">⏸ Pausar</button>
+                        <button id="btnCancelBatch" class="btn btn-secondary">✖ Cancelar Todo</button>
+                        <button id="btnExportBatch" class="btn btn-secondary">💾 Exportar</button>
+                    </div>
+                </div>
+
+                <div class="drop-zone-batch" id="dropZoneBatch">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📁</div>
+                    <h3>Arrastra múltiples PDFs aquí</h3>
+                    <p style="color: #B0BEC5; margin-top: 0.5rem;">o haz clic en "Seleccionar PDFs"</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="statTotal">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statProcessing">0</div>
+                        <div class="stat-label">Procesando</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statCompleted">0</div>
+                        <div class="stat-label">Completados</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statFailed">0</div>
+                        <div class="stat-label">Fallidos</div>
+                    </div>
+                </div>
+
+                <div class="job-list" id="jobList"></div>
+            </div>
+        </div>
+
+        <!-- Comparison Tab -->
+        <div id="comparisonTab" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <h2>🔄 Comparación de Documentos</h2>
+                    <div class="header-actions">
+                        <button id="btnSelectDoc1" class="btn btn-primary">Documento 1</button>
+                        <button id="btnSelectDoc2" class="btn btn-primary">Documento 2</button>
+                        <button id="btnCompare" class="btn btn-secondary">Comparar</button>
+                    </div>
+                </div>
+
+                <div class="comparison-container">
+                    <div class="document-panel">
+                        <div class="panel-header">📄 Documento 1</div>
+                        <div id="doc1Info">
+                            <p style="text-align: center; color: #B0BEC5; padding: 2rem;">
+                                Selecciona el primer documento
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="document-panel">
+                        <div class="panel-header">📄 Documento 2</div>
+                        <div id="doc2Info">
+                            <p style="text-align: center; color: #B0BEC5; padding: 2rem;">
+                                Selecciona el segundo documento
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="comparisonResults" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="historyTab" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <h2>📚 Historial de Procesamiento</h2>
+                    <div class="header-actions">
+                        <button id="btnRefreshHistory" class="btn btn-secondary">🔄 Actualizar</button>
+                        <button id="btnExportHistory" class="btn btn-secondary">💾 Exportar</button>
+                    </div>
+                </div>
+
+                <div class="search-bar">
+                    <input type="text" id="searchHistory" class="search-input" placeholder="Buscar en historial...">
+                    <select id="filterType" class="filter-select">
+                        <option value="">Todos los tipos</option>
+                        <option value="Dictamen de Protección Civil">Dictamen</option>
+                        <option value="Programa Interno">Programa Interno</option>
+                        <option value="Constancia">Constancia</option>
+                    </select>
+                </div>
+
+                <div class="history-list" id="historyList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pointing to ocr-renderer.js as mapped -->
+    <script src="ocr-renderer.js"></script>
+</body>
+
+</html>

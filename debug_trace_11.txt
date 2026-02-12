@@ -1,0 +1,83 @@
+
+DEBUG: Electron process starting...
+DEBUG: Importing advanced modules...
+DEBUG: Advanced modules imported.
+[2026-02-11T06:14:35.983Z] [INFO] === Iniciando aplicación TRAMITOLOGIA (Modo Producción Avanzado) ===
+
+🔄 Inicializando base de datos (SQL.js)...
+✨ Creando nueva base de datos
+📋 Creando esquema de base de datos...
+⚠️ Error en migración de proyectos.actualizado_en: Cannot read properties of undefined (reading '0')
+⚠️ Error en migración de proyectos.progreso: Cannot read properties of undefined (reading '0')
+⚠️ Error en migración de proyectos.etiquetas: Cannot read properties of undefined (reading '0')
+⚠️ Error en migración de tareas.actualizado_en: Cannot read properties of undefined (reading '0')
+⚠️ Error en migración de tareas.progreso: Cannot read properties of undefined (reading '0')
+⚠️ Error en migración de tareas.etiquetas: Cannot read properties of undefined (reading '0')
+⚠️ Error en migración de documentos.actualizado_en: Cannot read properties of undefined (reading '0')
+⚠️ Error en migración de documentos.hash: Cannot read properties of undefined (reading '0')
+✅ Esquema de base de datos creado/verificado
+⚠️ No se pudo crear backup rápido: ENOENT: no such file or directory, lstat 'C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\data\database.db'
+✅ Base de datos inicializada correctamente
+⚠️ Módulos secundarios no disponibles: Cannot find module './marco-juridico-updater'
+Require stack:
+- C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js
+- C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js
+[2026-02-11T06:14:36.124Z] [INFO] Base de datos inicializada correctamente
+
+DEBUG: Initializing advanced modules...
+DEBUG: Initializing TransactionManager...
+[2026-02-11T06:14:36.126Z] [INFO] TransactionManager inicializado
+
+DEBUG: Initializing BackupManager...
+DEBUG: BackupManager path: C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\data\database.db
+[BackupManager] Respaldo automático iniciado (intervalo: 3600000ms)
+[2026-02-11T06:14:36.129Z] [INFO] BackupManager inicializado con respaldos automáticos
+
+[2026-02-11T06:14:36.131Z] [INFO] RateLimiter inicializado
+
+[BackupManager] Directorio de respaldos: C:\Users\kadatherion\AppData\Roaming\Electron\backups
+[15472:0211/001436.218:ERROR:cache_util_win.cc(20)] Unable to move the cache: Acceso denegado. (0x5)
+[15472:0211/001436.219:ERROR:cache_util_win.cc(20)] Unable to move the cache: Acceso denegado. (0x5)
+[15472:0211/001436.227:ERROR:disk_cache.cc(208)] Unable to create cache
+[15472:0211/001436.227:ERROR:gpu_disk_cache.cc(676)] Gpu Cache Creation failed: -2
+[15472:0211/001436.227:ERROR:disk_cache.cc(208)] Unable to create cache
+[15472:0211/001436.227:ERROR:gpu_disk_cache.cc(676)] Gpu Cache Creation failed: -2
+[2026-02-11T06:14:37.720Z] [WARN] Módulo reportGenerator no encontrado (report-generator.js)
+
+[2026-02-11T06:14:37.721Z] [WARN] Módulo ocrProcessor no encontrado (ocr-processor.js)
+
+[2026-02-11T06:14:37.732Z] [INFO] Módulo optimizer cargado exitosamente
+
+[2026-02-11T06:14:37.733Z] [INFO] === Aplicación completamente inicializada ===
+
+[BackupManager] Respaldo creado: backup_auto_2026-02-11T06-14-41-145Z (11ms)
+[2026-02-11T06:14:42.448Z] [INFO] Ventana principal mostrada
+
+[DB Error] prepare: no such table: registros_tiempo
+[DB SQL]: SELECT SUM(duracion) as total FROM registros_tiempo 
+                 WHERE strftime('%Y-%m', fecha) = strftime('%Y-%m', 'now')
+[DB Error] prepare.all: undefined
+[DB SQL]: SELECT * FROM documentos WHERE proyecto_id = ? ORDER BY creado_en DESC
+[2026-02-11T06:14:42.584Z] [ERROR] Error obteniendo estadísticas - Wrong API use : tried to bind a value of an unknown type (undefined).
+
+[DB Error] prepare: no such table: registros_tiempo
+[DB SQL]: SELECT SUM(duracion) as total FROM registros_tiempo 
+                 WHERE strftime('%Y-%m', fecha) = strftime('%Y-%m', 'now')
+[DB Error] prepare.all: undefined
+[DB SQL]: SELECT * FROM documentos WHERE proyecto_id = ? ORDER BY creado_en DESC
+[2026-02-11T06:14:42.827Z] [ERROR] Error obteniendo estadísticas - Wrong API use : tried to bind a value of an unknown type (undefined).
+
+[DB Error] prepare: no such table: registros_tiempo
+[DB SQL]: SELECT SUM(duracion) as total FROM registros_tiempo 
+                 WHERE strftime('%Y-%m', fecha) = strftime('%Y-%m', 'now')
+[DB Error] prepare.all: undefined
+[DB SQL]: SELECT * FROM documentos WHERE proyecto_id = ? ORDER BY creado_en DESC
+[2026-02-11T06:14:42.858Z] [ERROR] Error obteniendo estadísticas - Wrong API use : tried to bind a value of an unknown type (undefined).
+
+[2026-02-11T06:14:45.423Z] [INFO] Todas las ventanas cerradas
+
+[2026-02-11T06:14:45.425Z] [INFO] Cerrando aplicación y limpiando recursos...
+
+[BackupManager] Respaldo automático detenido
+[2026-02-11T06:14:45.427Z] [INFO] Recursos limpiados correctamente
+

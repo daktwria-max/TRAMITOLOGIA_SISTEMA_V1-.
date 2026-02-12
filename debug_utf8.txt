@@ -1,0 +1,270 @@
+﻿
+DEBUG: Electron process starting...
+DEBUG: Importing advanced modules...
+DEBUG: Advanced modules imported.
+[2026-02-11T05:33:58.102Z] [INFO] === Iniciando aplicaci├│n TRAMITOLOGIA (Modo Producci├│n Avanzado) ===
+
+­ƒöä Inicializando base de datos (SQL.js Pure JS)...
+­ƒôé Cargando base de datos existente: C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\data\database.db
+Ô£à Base de datos Pure-JS lista y configurada
+node.exe : ÔÜá´©Å M├│dulos 
+secundarios (opcionales) no 
+cargados: Cannot find module 
+'./marco-juridico-updater'
+En C:\Users\kadatherion\Desktop\TRAM
+ITOLOGIA_SISTEMA_V1\node_modules\.bi
+n\electron.ps1: 24 Carácter: 5
++     & "node$exe"  
+"$basedir/../electron/cli.js" $args
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSp 
+   ecified: (ÔÜá´©Å M├│dulos...rid  
+  ico-updater':String) [], Remote   
+ Exception
+    + FullyQualifiedErrorId : Nativ 
+   eCommandError
+ 
+Require stack:
+- C:\Users\kadatherion\Desktop\TRAMI
+TOLOGIA_SISTEMA_V1\database.js
+- C:\Users\kadatherion\Desktop\TRAMI
+TOLOGIA_SISTEMA_V1\electron.js
+[2026-02-11T05:33:58.189Z] [INFO] Base de datos inicializada correctamente
+
+DEBUG: Initializing advanced modules...
+DEBUG: Initializing TransactionManager...
+[2026-02-11T05:33:58.191Z] [INFO] TransactionManager inicializado
+
+[BackupManager] Respaldo autom├ítico iniciado (intervalo: 3600000ms)
+[2026-02-11T05:33:58.196Z] [INFO] BackupManager inicializado con respaldos autom├íticos
+
+[2026-02-11T05:33:58.198Z] [INFO] RateLimiter inicializado
+
+[BackupManager] Directorio de respaldos: C:\Users\kadatherion\AppData\Roaming\Electron\backups
+[2026-02-11T05:34:00.056Z] [INFO] Ventana principal mostrada
+
+[2026-02-11T05:34:00.065Z] [WARN] M├│dulo reportGenerator no encontrado (report-generator.js)
+
+[2026-02-11T05:34:00.069Z] [WARN] M├│dulo ocrProcessor no encontrado (ocr-processor.js)
+
+[2026-02-11T05:34:00.137Z] [INFO] M├│dulo optimizer cargado exitosamente
+
+[2026-02-11T05:34:00.140Z] [INFO] === Aplicaci├│n completamente inicializada ===
+
+Error occurred in handler for 
+'obtener-proyectos': Error: An 
+object could not be cloned.
+    at WebContents.<anonymous> (node
+:electron/js2c/browser_init:2:78006)
+[2026-02-11T05:34:00.196Z] [ERROR] 
+Promesa rechazada no manejada - 
+column index out of range
+
+[2026-02-11T05:34:00.198Z] [STACK] Error: column index out of range
+    at e.handleError (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:90:371)
+    at c.Bb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:83:470)
+    at c.tb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:84:497)
+    at c.Cb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:85:269)
+    at c.bind (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:80:250)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:86:14)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:162:51)
+    at Object.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:344:22)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:349:40
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+
+Error occurred in handler for 
+'obtener-proyectos': Error: An 
+object could not be cloned.
+    at WebContents.<anonymous> (node
+:electron/js2c/browser_init:2:78006)
+[2026-02-11T05:34:00.207Z] [ERROR] 
+Promesa rechazada no manejada - 
+column index out of range
+
+[2026-02-11T05:34:00.208Z] [STACK] Error: column index out of range
+    at e.handleError (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:90:371)
+    at c.Bb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:83:470)
+    at c.tb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:84:497)
+    at c.Cb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:85:269)
+    at c.bind (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:80:250)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:86:14)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:162:51)
+    at Object.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:344:22)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:349:40
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+
+[2026-02-11T05:34:00.281Z] [ERROR] 
+Error obteniendo estad├¡sticas - 
+column index out of range
+
+[2026-02-11T05:34:00.282Z] [STACK] Error: column index out of range
+    at e.handleError (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:90:371)
+    at c.Bb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:83:470)
+    at c.tb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:84:497)
+    at c.Cb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:85:269)
+    at c.bind (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:80:250)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:86:14)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:162:51)
+    at Object.obtenerTareas (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:356:22)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:815:42
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+
+[2026-02-11T05:34:00.283Z] [ERROR] 
+Promesa rechazada no manejada - 
+column index out of range
+
+[2026-02-11T05:34:00.285Z] [STACK] Error: column index out of range
+    at e.handleError (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:90:371)
+    at c.Bb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:83:470)
+    at c.tb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:84:497)
+    at c.Cb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:85:269)
+    at c.bind (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:80:250)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:86:14)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:162:51)
+    at Object.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:344:22)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:814:45
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+
+[2026-02-11T05:34:00.504Z] [ERROR] 
+Error obteniendo estad├¡sticas - 
+column index out of range
+
+[2026-02-11T05:34:00.506Z] [STACK] Error: column index out of range
+    at e.handleError (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:90:371)
+    at c.Bb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:83:470)
+    at c.tb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:84:497)
+    at c.Cb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:85:269)
+    at c.bind (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:80:250)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:86:14)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:162:51)
+    at Object.obtenerTareas (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:356:22)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:815:42
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+
+[2026-02-11T05:34:00.509Z] [ERROR] 
+Promesa rechazada no manejada - 
+column index out of range
+
+[2026-02-11T05:34:00.511Z] [STACK] Error: column index out of range
+    at e.handleError (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:90:371)
+    at c.Bb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:83:470)
+    at c.tb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:84:497)
+    at c.Cb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:85:269)
+    at c.bind (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:80:250)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:86:14)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:162:51)
+    at Object.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:344:22)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:814:45
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+
+[2026-02-11T05:34:00.550Z] [ERROR] 
+Error obteniendo estad├¡sticas - 
+column index out of range
+
+[2026-02-11T05:34:00.552Z] [STACK] Error: column index out of range
+    at e.handleError (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:90:371)
+    at c.Bb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:83:470)
+    at c.tb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:84:497)
+    at c.Cb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:85:269)
+    at c.bind (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:80:250)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:86:14)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:162:51)
+    at Object.obtenerTareas (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:356:22)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:815:42
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+
+[2026-02-11T05:34:00.554Z] [ERROR] 
+Promesa rechazada no manejada - 
+column index out of range
+
+[2026-02-11T05:34:00.555Z] [STACK] Error: column index out of range
+    at e.handleError (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:90:371)
+    at c.Bb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:83:470)
+    at c.tb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:84:497)
+    at c.Cb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:85:269)
+    at c.bind (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:80:250)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:86:14)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:162:51)
+    at Object.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:344:22)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:814:45
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+
+[BackupManager] Error creando 
+respaldo: Error: Base de datos no 
+encontrada
+    at BackupManager.createBackup (C
+:\Users\kadatherion\Desktop\TRAMITOL
+OGIA_SISTEMA_V1\backup-manager.js:99
+:23)
+[2026-02-11T05:34:03.213Z] [ERROR] 
+Promesa rechazada no manejada - 
+Base de datos no encontrada
+
+[2026-02-11T05:34:03.218Z] [STACK] Error: Base de datos no encontrada
+    at BackupManager.createBackup (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\backup-manager.js:99:23)
+
+[2026-02-11T05:35:45.950Z] [ERROR] 
+Error obteniendo estad├¡sticas - 
+column index out of range
+
+[2026-02-11T05:35:45.966Z] [STACK] Error: column index out of range
+    at e.handleError (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:90:371)
+    at c.Bb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:83:470)
+    at c.tb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:84:497)
+    at c.Cb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:85:269)
+    at c.bind (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:80:250)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:86:14)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:162:51)
+    at Object.obtenerTareas (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:356:22)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:815:42
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+
+[2026-02-11T05:35:45.969Z] [ERROR] 
+Promesa rechazada no manejada - 
+column index out of range
+
+[2026-02-11T05:35:45.972Z] [STACK] Error: column index out of range
+    at e.handleError (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:90:371)
+    at c.Bb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:83:470)
+    at c.tb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:84:497)
+    at c.Cb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:85:269)
+    at c.bind (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:80:250)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:86:14)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:162:51)
+    at Object.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:344:22)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:814:45
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+
+[2026-02-11T05:35:45.980Z] [ERROR] 
+Error obteniendo estad├¡sticas - 
+column index out of range
+
+[2026-02-11T05:35:45.983Z] [STACK] Error: column index out of range
+    at e.handleError (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:90:371)
+    at c.Bb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:83:470)
+    at c.tb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:84:497)
+    at c.Cb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:85:269)
+    at c.bind (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:80:250)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:86:14)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:162:51)
+    at Object.obtenerTareas (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:356:22)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:815:42
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+
+[2026-02-11T05:35:45.985Z] [ERROR] 
+Promesa rechazada no manejada - 
+column index out of range
+
+[2026-02-11T05:35:45.987Z] [STACK] Error: column index out of range
+    at e.handleError (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:90:371)
+    at c.Bb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:83:470)
+    at c.tb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:84:497)
+    at c.Cb (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:85:269)
+    at c.bind (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\node_modules\sql.js\dist\sql-wasm.js:80:250)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:86:14)
+    at Object.all (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:162:51)
+    at Object.obtenerProyectos (C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\database.js:344:22)
+    at C:\Users\kadatherion\Desktop\TRAMITOLOGIA_SISTEMA_V1\electron.js:814:45
+    at WebContents.<anonymous> (node:electron/js2c/browser_init:2:77979)
+

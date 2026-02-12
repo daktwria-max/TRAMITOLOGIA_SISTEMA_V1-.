@@ -1,654 +1,725 @@
-// ==================== VISTA DE DOCUMENTOS ====================
+/**
+ * DOCUMENTOS UI - SISTEMA COMPLETO v2.0.0
+ * Gestión de documentos con Drag & Drop, Versiones, Batch Upload y Visor Integrado
+ */
 
-function mostrarDocumentos() {
-  const html = `
-    <div class="header">
-      <div>
-        <h1>📄 Documentos</h1>
-        <p style="color: var(--color-texto-secundario); margin-top: 5px;">
-          Gestiona todos los documentos de tus proyectos
-        </p>
-      </div>
-      <div class="header-actions">
-        <button class="btn btn-secondary" onclick="mostrarFiltrosDocumentos()">
-          🔍 Filtros
-        </button>
-        <button class="btn btn-primary" onclick="subirDocumento()">
-          ➕ Subir Documento
-        </button>
-      </div>
-    </div>
+// Estado global
+let documentState = {
+  currentPath: 'root',
+  viewMode: 'grid',
+  selectedFiles: new Set(),
+  documents: [],
+  filter: 'todos',
+  sort: 'fecha_desc',
+  searchQuery: ''
+};
 
-    <!-- Estadísticas rápidas -->
-    <div class="stats-grid" style="margin-bottom: var(--espaciado-xl);">
-      <div class="stat-card">
-        <h3>Total Documentos</h3>
-        <div class="value">${obtenerTotalDocumentos()}</div>
-      </div>
-      <div class="stat-card">
-        <h3>Por Vencer</h3>
-        <div class="value" style="color: var(--color-advertencia);">
-          ${obtenerDocumentosPorVencer()}
-        </div>
-      </div>
-      <div class="stat-card">
-        <h3>Vencidos</h3>
-        <div class="value" style="color: var(--color-peligro);">
-          ${obtenerDocumentosVencidos()}
-        </div>
-      </div>
-      <div class="stat-card">
-        <h3>Vigentes</h3>
-        <div class="value" style="color: var(--color-exito);">
-          ${obtenerDocumentosVigentes()}
-        </div>
-      </div>
-    </div>
+const MAX_DOC_SIZE = 200 * 1024 * 1024; // 200MB
+const BLOCKED_EXTENSIONS = ['exe', 'bat', 'cmd', 'sh', 'js'];
 
-    <!-- Tabs de categorías -->
-    <div class="tabs-container">
-      <button class="tab-btn active" data-filtro="todos" onclick="filtrarDocumentosPorTipo('todos')">
-        Todos (${obtenerTotalDocumentos()})
-      </button>
-      <button class="tab-btn" data-filtro="AVISO_FUNCIONAMIENTO" onclick="filtrarDocumentosPorTipo('AVISO_FUNCIONAMIENTO')">
-        Avisos de Funcionamiento
-      </button>
-      <button class="tab-btn" data-filtro="POLIZA_SEGURO" onclick="filtrarDocumentosPorTipo('POLIZA_SEGURO')">
-        Pólizas de Seguro
-      </button>
-      <button class="tab-btn" data-filtro="DICTAMEN_TECNICO" onclick="filtrarDocumentosPorTipo('DICTAMEN_TECNICO')">
-        Dictámenes Técnicos
-      </button>
-      <button class="tab-btn" data-filtro="PROGRAMA_INTERNO" onclick="filtrarDocumentosPorTipo('PROGRAMA_INTERNO')">
-        Programas Internos
-      </button>
-    </div>
+// ==================== INICIALIZACIÓN ====================
 
-    <!-- Lista de documentos -->
-    <div class="documentos-container" id="listaDocumentos">
-      ${renderizarListaDocumentos()}
-    </div>
-  `;
+async function mostrarDocumentos() {
+  const container = document.getElementById('contentArea');
 
-  document.getElementById('contentArea').innerHTML = html;
-}
-
-async function renderizarListaDocumentos(filtroTipo = 'todos') {
-  const documentosPorProyecto = await obtenerTodosDocumentos();
-
-  if (documentosPorProyecto.length === 0) {
-    return `
-      <div class="empty-state">
-        <div class="empty-state-icon">📄</div>
-        <h3>No hay documentos</h3>
-        <p>Sube tu primer documento para comenzar</p>
-        <button class="btn btn-primary" onclick="subirDocumento()">
-          ➕ Subir Documento
-        </button>
-      </div>
-    `;
-  }
-
-  let html = '';
-
-  for (const { proyecto, documentos } of documentosPorProyecto) {
-    let documentosFiltrados = documentos;
-
-    if (filtroTipo !== 'todos') {
-      documentosFiltrados = documentos.filter(d => d.tipo === filtroTipo);
-    }
-
-    if (documentosFiltrados.length === 0) continue;
-
-    html += `
-      <div class="documentos-proyecto-grupo">
-        <div class="documentos-proyecto-header">
-          <h3>📁 ${proyecto.nombre}</h3>
-          <span class="badge badge-info">${documentosFiltrados.length} documento${documentosFiltrados.length !== 1 ? 's' : ''}</span>
-        </div>
-
-        <div class="documentos-grid">
-          ${documentosFiltrados.map(doc => renderizarDocumentoCard(doc, proyecto)).join('')}
-        </div>
-      </div>
-    `;
-  }
-
-  return html || `
-    <div class="empty-state">
-      <div class="empty-state-icon">📄</div>
-      <h3>No hay documentos de este tipo</h3>
-    </div>
-  `;
-}
-
-function renderizarDocumentoCard(documento, proyecto) {
-  const vencido = documento.fecha_vencimiento && new Date(documento.fecha_vencimiento) < new Date();
-  const porVencer = documento.fecha_vencimiento &&
-    new Date(documento.fecha_vencimiento) > new Date() &&
-    new Date(documento.fecha_vencimiento) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-
-  return `
-    <div class="documento-card ${vencido ? 'documento-vencido' : ''} ${porVencer ? 'documento-por-vencer' : ''}">
-      <div class="documento-card-header">
-        <div class="documento-icon-large">
-          ${obtenerIconoDocumento(documento.tipo)}
-        </div>
-        <button class="btn-icon" onclick="mostrarMenuDocumento(event, '${documento.id}', '${proyecto.id}')">
-          ⋮
-        </button>
-      </div>
-
-      <div class="documento-card-body" onclick="abrirDocumento('${documento.id}', '${proyecto.id}')">
-        <h4>${documento.nombre}</h4>
-        <p class="documento-tipo">${formatearTipoDocumento(documento.tipo)}</p>
-
-        ${documento.fecha_vencimiento ? `
-          <div class="documento-vencimiento ${vencido ? 'vencido' : ''} ${porVencer ? 'por-vencer' : ''}">
-            <span class="documento-vencimiento-icon">
-              ${vencido ? '❌' : porVencer ? '⚠️' : '✓'}
-            </span>
-            <span class="documento-vencimiento-texto">
-              ${vencido ? 'Vencido' : porVencer ? 'Por vencer' : 'Vigente'} - ${formatearFecha(documento.fecha_vencimiento)}
-            </span>
-          </div>
-        ` : ''}
-
-        <div class="documento-meta">
-          <span>📅 ${formatearFecha(documento.fecha_subida)}</span>
-          ${documento.tamano ? `
-            <span>💾 ${formatearTamano(documento.tamano)}</span>
-          ` : ''}
-        </div>
-      </div>
-
-      <div class="documento-card-footer">
-        <button class="btn btn-sm btn-secondary" onclick="abrirDocumento('${documento.id}', '${proyecto.id}')">
-          👁️ Ver
-        </button>
-        <button class="btn btn-sm btn-secondary" onclick="descargarDocumento('${documento.id}', '${proyecto.id}')">
-          ⬇️ Descargar
-        </button>
-      </div>
-    </div>
-  `;
-}
-
-// ==================== OBTENER DOCUMENTOS ====================
-
-async function obtenerTodosDocumentos() {
-  const documentosPorProyecto = [];
-
-  for (const proyecto of estadoActual.proyectos) {
-    const resultado = await window.electronAPI.obtenerDocumentos(proyecto.id);
-
-    if (resultado.success && resultado.data.length > 0) {
-      documentosPorProyecto.push({
-        proyecto: proyecto,
-        documentos: resultado.data
-      });
-    }
-  }
-
-  return documentosPorProyecto;
-}
-
-function obtenerTotalDocumentos() {
-  // Simulado por ahora - en producción obtener de la base de datos
-  return 0;
-}
-
-function obtenerDocumentosPorVencer() {
-  // Simulado - documentos que vencen en los próximos 30 días
-  return 0;
-}
-
-function obtenerDocumentosVencidos() {
-  // Simulado - documentos ya vencidos
-  return 0;
-}
-
-function obtenerDocumentosVigentes() {
-  // Simulado - documentos vigentes
-  return 0;
-}
-
-// ==================== FILTRADO ====================
-
-async function filtrarDocumentosPorTipo(tipo) {
-  // Actualizar tabs
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.classList.remove('active');
-    if (btn.dataset.filtro === tipo) {
-      btn.classList.add('active');
-    }
-  });
-
-  // Actualizar lista
-  document.getElementById('listaDocumentos').innerHTML = await renderizarListaDocumentos(tipo);
-}
-
-function mostrarFiltrosDocumentos() {
-  const modal = document.createElement('div');
-  modal.className = 'modal active';
-  modal.id = 'modalFiltrosDocumentos';
-
-  modal.innerHTML = `
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>🔍 Filtros Avanzados</h2>
-        <button class="close-btn" onclick="cerrarModal('modalFiltrosDocumentos')">×</button>
-      </div>
-      
-      <form onsubmit="aplicarFiltrosDocumentos(event)">
-        <div class="form-group">
-          <label>Buscar por nombre</label>
-          <input type="text" class="form-control" name="busqueda" placeholder="Nombre del documento...">
-        </div>
-
-        <div class="form-group">
-          <label>Proyecto</label>
-          <select class="form-control" name="proyecto_id">
-            <option value="">Todos los proyectos</option>
-            ${estadoActual.proyectos.map(p => `
-              <option value="${p.id}">${p.nombre}</option>
-            `).join('')}
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Tipo de Documento</label>
-          <select class="form-control" name="tipo">
-            <option value="">Todos los tipos</option>
-            <option value="AVISO_FUNCIONAMIENTO">Aviso de Funcionamiento</option>
-            <option value="PERMISO_IMPACTO_ZONAL">Permiso de Impacto Zonal</option>
-            <option value="POLIZA_SEGURO">Póliza de Seguro</option>
-            <option value="DICTAMEN_TECNICO">Dictamen Técnico</option>
-            <option value="PROGRAMA_INTERNO">Programa Interno</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Estado de Vigencia</label>
-          <select class="form-control" name="vigencia">
-            <option value="">Todos</option>
-            <option value="vigente">Vigentes</option>
-            <option value="por_vencer">Por Vencer (30 días)</option>
-            <option value="vencido">Vencidos</option>
-          </select>
-        </div>
-
-        <div style="display: flex; gap: var(--espaciado-md); justify-content: flex-end; margin-top: var(--espaciado-lg);">
-          <button type="button" class="btn btn-secondary" onclick="limpiarFiltrosDocumentos()">
-            Limpiar
-          </button>
-          <button type="submit" class="btn btn-primary">
-            Aplicar Filtros
-          </button>
-        </div>
-      </form>
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-}
-
-async function aplicarFiltrosDocumentos(event) {
-  event.preventDefault();
-  // Implementar lógica de filtrado avanzado
-  cerrarModal('modalFiltrosDocumentos');
-}
-
-function limpiarFiltrosDocumentos() {
-  cerrarModal('modalFiltrosDocumentos');
-  mostrarDocumentos();
-}
-
-// ==================== SUBIR DOCUMENTO ====================
-
-function subirDocumento(proyectoId = null) {
-  const modal = document.createElement('div');
-  modal.className = 'modal active';
-  modal.id = 'modalSubirDocumento';
-
-  modal.innerHTML = `
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>📤 Subir Documento</h2>
-        <button class="close-btn" onclick="cerrarModal('modalSubirDocumento')">×</button>
-      </div>
-      
-      <form onsubmit="procesarSubidaDocumento(event)">
-        <div class="form-group">
-          <label>Proyecto *</label>
-          <select class="form-control" name="proyecto_id" required>
-            <option value="">Seleccionar proyecto...</option>
-            ${estadoActual.proyectos.map(p => `
-              <option value="${p.id}" ${proyectoId === p.id ? 'selected' : ''}>
-                ${p.nombre}
-              </option>
-            `).join('')}
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Nombre del Documento *</label>
-          <input type="text" 
-                 class="form-control" 
-                 name="nombre" 
-                 placeholder="Ej: Aviso de Funcionamiento 2024"
-                 required>
-        </div>
-
-        <div class="form-group">
-          <label>Tipo de Documento *</label>
-          <select class="form-control" name="tipo" required>
-            <option value="">Seleccionar tipo...</option>
-            <option value="AVISO_FUNCIONAMIENTO">Aviso de Funcionamiento</option>
-            <option value="PERMISO_IMPACTO_ZONAL">Permiso de Impacto Zonal</option>
-            <option value="POLIZA_SEGURO">Póliza de Seguro</option>
-            <option value="DICTAMEN_TECNICO">Dictamen Técnico</option>
-            <option value="PROGRAMA_INTERNO">Programa Interno de Protección Civil</option>
-            <option value="OTRO">Otro</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Fecha de Vencimiento</label>
-          <input type="date" class="form-control" name="fecha_vencimiento">
-          <small style="color: var(--color-texto-secundario);">
-            Opcional - Para documentos con vigencia temporal
-          </small>
-        </div>
-
-        <div class="form-group">
-          <label>Archivo *</label>
-          <div class="file-upload-area" id="fileUploadArea">
-            <input type="file" 
-                   id="fileInput" 
-                   name="archivo" 
-                   accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                   style="display: none;"
-                   onchange="mostrarArchivoSeleccionado(this)">
-            <div class="file-upload-placeholder" onclick="seleccionarArchivoNativo()">
-              <div style="font-size: 48px; margin-bottom: 10px;">📁</div>
-              <p>Haz clic para seleccionar un archivo</p>
-              <small>PDF, Imágenes o Documentos (Máx. 10MB)</small>
+  // 1. Estructura Base
+  container.innerHTML = `
+        <div class="page-header">
+            <div class="header-content">
+                <div>
+                    <h1>📄 Gestión de Documentos</h1>
+                    <p class="text-muted">Administra, organiza y visualiza tus archivos</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="iniciarSlideshow()">
+                        🖼️ Presentación
+                    </button>
+                    <button class="btn btn-secondary" onclick="abrirGaleriaImagenes()">
+                        📷 Galería
+                    </button>
+                    <button class="btn btn-primary" onclick="abrirModalSubida()">
+                        ☁️ Subir Documento
+                    </button>
+                </div>
             </div>
-            <div class="file-upload-selected" id="fileSelected" style="display: none;">
-              <div class="file-icon">📄</div>
-              <div class="file-info">
-                <strong id="fileName"></strong>
-                <p id="filePath" style="font-size: 10px; color: #666;"></p>
-              </div>
-              <button type="button" class="btn btn-sm btn-danger" onclick="limpiarArchivoSeleccionado()">
-                ✕
-              </button>
+        </div>
+
+        <!-- Toolbar de Selección -->
+        <div class="selection-toolbar" id="selectionToolbar">
+            <div class="selection-count">0 seleccionados</div>
+            <div class="selection-actions">
+                <button class="btn btn-sm" onclick="compararSeleccionados()">⚖️ Comparar</button>
+                <button class="btn btn-sm" onclick="descargarSeleccionados()">📥 Descargar</button>
+                <button class="btn btn-sm" onclick="eliminarSeleccionados()">🗑️ Eliminar</button>
+                <button class="btn btn-sm" onclick="cancelarSeleccion()">✕ Cancelar</button>
             </div>
-            <!-- Campo oculto para guardar la ruta -->
-            <input type="hidden" name="ruta_archivo" id="rutaArchivo">
-          </div>
         </div>
 
-        <div class="form-group">
-          <label>Notas</label>
-          <textarea class="form-control" 
-                    name="notas" 
-                    rows="3"
-                    placeholder="Notas adicionales sobre el documento..."></textarea>
+        <!-- Estadísticas Rápidas -->
+        <div class="estadisticas-section">
+            <div class="stats-grid" id="statsGrid">
+                <div class="loading-spinner">Cargando estadísticas...</div>
+            </div>
         </div>
 
-        <div style="display: flex; gap: var(--espaciado-md); justify-content: flex-end; margin-top: var(--espaciado-lg);">
-          <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalSubirDocumento')">
-            Cancelar
-          </button>
-          <button type="submit" class="btn btn-primary">
-            📤 Subir Documento
-          </button>
+        <!-- Toolbar Principal -->
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <div class="search-box">
+                    <input type="text" 
+                           class="search-input" 
+                           placeholder="Buscar documentos..." 
+                           oninput="handleSearch(this.value)">
+                </div>
+                <select class="filter-select" onchange="handleFilter(this.value)">
+                    <option value="todos">Todos los archivos</option>
+                    <option value="pdf">📄 PDF</option>
+                    <option value="imagen">🖼️ Imágenes</option>
+                    <option value="office">📝 Office</option>
+                    <option value="otros">📦 Otros</option>
+                </select>
+            </div>
+            <div class="toolbar-right">
+                <span class="contador" id="docCount">0 documentos</span>
+                <div class="view-toggle">
+                    <button class="btn-icon active" onclick="cambiarVista('grid')" title="Vista Cuadrícula">
+                        📱
+                    </button>
+                    <button class="btn-icon" onclick="cambiarVista('list')" title="Vista Lista">
+                        equiv
+                    </button>
+                </div>
+            </div>
         </div>
-      </form>
-    </div>
-  `;
 
-  document.body.appendChild(modal);
+        <!-- Zona de Drop -->
+        <div class="drop-zone" id="dropZone">
+            <div class="drop-zone-content">
+                <div class="drop-zone-icon">☁️</div>
+                <h3>Arrastra y suelta archivos aquí</h3>
+                <p>O haz clic para seleccionar</p>
+            </div>
+        </div>
+
+        <!-- Contenedor de Documentos -->
+        <div class="main-content" id="documentosContainer">
+            <div class="loading-spinner">Cargando documentos...</div>
+        </div>
+
+        <!-- Container del Visor (Inyectado dinámicamente) -->
+        <div id="documentViewerContainer" style="display: none;"></div>
+
+        <!-- Modal de Subida -->
+        <div class="modal-overlay" id="uploadModal">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h3>Subir Documentos</h3>
+                    <button class="modal-close" onclick="cerrarModalSubida()">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="upload-batch-container" id="uploadBatchList"></div>
+                    <div class="form-actions" style="margin-top: 1rem;">
+                        <button class="btn btn-secondary" onclick="cerrarModalSubida()">Cancelar</button>
+                        <button class="btn btn-primary" onclick="iniciarSubidaBatch()">Iniciar Subida</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+  // 2. Inicializar Eventos y Visor
+  setupDragAndDrop();
+  initDocumentViewer();
+
+  // 3. Cargar Datos
+  await cargarEstadisticas();
+  await cargarDocumentos();
 }
 
-async function seleccionarArchivoNativo() {
-  try {
-    const resultado = await window.electronAPI.seleccionarArchivo();
-    if (!resultado.canceled && resultado.filePaths.length > 0) {
-      const ruta = resultado.filePaths[0];
-      const nombre = ruta.split(/[\\/]/).pop();
+// ==================== VISOR INTEGRATION ====================
 
-      mostrarArchivoSeleccionado(nombre, ruta);
-    }
-  } catch (error) {
-    console.error("Error seleccionando archivo", error);
+let documentViewer = null;
+
+function initDocumentViewer() {
+  if (!documentViewer && typeof DocumentViewer !== 'undefined') {
+    documentViewer = new DocumentViewer('documentViewerContainer', {
+      theme: 'dark',
+      enableFullscreen: true,
+      enableDownload: true,
+      enablePrint: true
+    });
   }
 }
 
-function mostrarArchivoSeleccionado(nombre, ruta) {
-  document.querySelector('.file-upload-placeholder').style.display = 'none';
-  document.getElementById('fileSelected').style.display = 'flex';
-  document.getElementById('fileName').textContent = nombre;
-  document.getElementById('filePath').textContent = ruta;
+async function abrirDocumento(docIdOrPath) {
+  // Soporte para llamar con ID o con ruta directa (para compatibilidad)
+  let doc = documentState.documents.find(d => d.id === docIdOrPath);
 
-  // Guardar ruta en input oculto para el formulario
-  document.getElementById('rutaArchivo').value = ruta;
-}
+  if (!doc && typeof docIdOrPath === 'string') {
+    // Si no encontramos por ID, intentamos buscar por ruta o crear objeto temporal
+    doc = documentState.documents.find(d => d.ruta === docIdOrPath);
+    if (!doc) {
+      // Objeto temporal si es ruta directa
+      doc = {
+        ruta: docIdOrPath,
+        nombre: docIdOrPath.split(/[\\/]/).pop(),
+        tipo: docIdOrPath.split('.').pop().toLowerCase(),
+        id: 'temp-' + Date.now()
+      };
+    }
+  }
 
-function limpiarArchivoSeleccionado() {
-  document.getElementById('rutaArchivo').value = '';
-  document.querySelector('.file-upload-placeholder').style.display = 'flex';
-  document.getElementById('fileSelected').style.display = 'none';
-}
-
-async function procesarSubidaDocumento(event) {
-  event.preventDefault();
-  const formData = new FormData(event.target);
-
-  const rutaArchivo = formData.get('ruta_archivo');
-  if (!rutaArchivo) {
-    sistemaNotificaciones.notificarError(
-      'Archivo Requerido',
-      'Debes seleccionar un archivo para subir'
-    );
+  if (!doc) {
+    alert('Documento no encontrado');
     return;
   }
 
   try {
-    // Mostrar progreso
-    sistemaNotificaciones.notificarInfo(
-      'Subiendo Documento',
-      'Por favor espera mientras se sube el archivo...'
-    );
+    const checkResult = await window.documentAPI.checkExists(doc.ruta);
 
-    const resultado = await window.electronAPI.agregarDocumento({
-      proyecto_id: formData.get('proyecto_id'),
-      nombre: formData.get('nombre'),
-      tipo: formData.get('tipo'),
-      fecha_vencimiento: formData.get('fecha_vencimiento') || null,
-      notas: formData.get('notas') || null,
-      ruta: rutaArchivo // Enviamos la ruta absoluta
-    });
-
-    if (resultado.success) {
-      sistemaNotificaciones.notificarExito(
-        'Documento Subido',
-        `El documento "${formData.get('nombre')}" se ha subido correctamente`
-      );
-
-      cerrarModal('modalSubirDocumento');
-      mostrarDocumentos();
-    } else {
-      sistemaNotificaciones.notificarError(
-        'Error',
-        resultado.error || 'No se pudo subir el documento'
-      );
+    if (!checkResult.success || !checkResult.exists) {
+      throw new Error('El archivo no existe en el sistema');
     }
-  } catch (error) {
-    console.error('Error subiendo documento:', error);
-    sistemaNotificaciones.notificarError(
-      'Error',
-      'Ocurrió un error al subir el documento'
-    );
-  }
-}
 
-// ==================== ACCIONES SOBRE DOCUMENTOS ====================
+    const extension = doc.tipo.toLowerCase();
+    const viewableExtensions = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'txt'];
 
-async function abrirDocumento(documentoId, proyectoId) {
-  try {
-    const resultado = await window.electronAPI.abrirDocumento(proyectoId, documentoId);
-
-    if (!resultado.success) {
-      sistemaNotificaciones.notificarError(
-        'Error',
-        'No se pudo abrir el documento'
-      );
+    if (viewableExtensions.includes(extension) && documentViewer) {
+      await documentViewer.open(doc.ruta, {
+        nombre: doc.nombre,
+        tipo: doc.tipo,
+        tamanio: doc.tamanio,
+        id: doc.id
+      });
+    } else {
+      const resultado = await window.documentAPI.open(doc.ruta);
+      if (!resultado.success) {
+        throw new Error(resultado.error);
+      }
     }
   } catch (error) {
     console.error('Error abriendo documento:', error);
-    sistemaNotificaciones.notificarError(
-      'Error',
-      'Ocurrió un error al abrir el documento'
-    );
+    alert('Error: ' + error.message);
   }
 }
 
-async function descargarDocumento(documentoId, proyectoId) {
-  try {
-    const resultado = await window.electronAPI.descargarDocumento(proyectoId, documentoId);
+// ==================== GALERÍA & SLIDESHOW ====================
 
-    if (resultado.success) {
-      sistemaNotificaciones.notificarExito(
-        'Documento Descargado',
-        'El documento se ha guardado correctamente'
-      );
-    } else {
-      sistemaNotificaciones.notificarError(
-        'Error',
-        'No se pudo descargar el documento'
-      );
-    }
-  } catch (error) {
-    console.error('Error descargando documento:', error);
-    sistemaNotificaciones.notificarError(
-      'Error',
-      'Ocurrió un error al descargar el documento'
-    );
-  }
-}
+function abrirGaleriaImagenes() {
+  const imagenes = documentState.documents.filter(doc =>
+    ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(doc.tipo.toLowerCase())
+  );
 
-async function eliminarDocumento(documentoId, proyectoId) {
-  if (!confirm('¿Estás seguro de eliminar este documento? Esta acción no se puede deshacer.')) {
+  if (imagenes.length === 0) {
+    alert('No hay imágenes para mostrar');
     return;
   }
 
-  try {
-    const resultado = await window.electronAPI.eliminarDocumento(proyectoId, documentoId);
-
-    if (resultado.success) {
-      sistemaNotificaciones.notificarExito(
-        'Documento Eliminado',
-        'El documento ha sido eliminado correctamente'
-      );
-
-      mostrarDocumentos();
-    } else {
-      sistemaNotificaciones.notificarError(
-        'Error',
-        'No se pudo eliminar el documento'
-      );
-    }
-  } catch (error) {
-    console.error('Error eliminando documento:', error);
-    sistemaNotificaciones.notificarError(
-      'Error',
-      'Ocurrió un error al eliminar el documento'
-    );
+  // Aquí podríamos implementar una vista de galería más elaborada
+  // Por ahora, filtramos la vista principal
+  const select = document.querySelector('.filter-select');
+  if (select) {
+    select.value = 'imagen';
+    handleFilter('imagen');
   }
 }
 
-function mostrarMenuDocumento(event, documentoId, proyectoId) {
-  event.stopPropagation();
+let slideshowInterval = null;
+let slideshowIndex = 0;
+let slideshowImages = [];
 
-  document.querySelectorAll('.context-menu').forEach(m => m.remove());
+function iniciarSlideshow() {
+  slideshowImages = documentState.documents.filter(doc =>
+    ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(doc.tipo.toLowerCase())
+  );
 
-  const menu = document.createElement('div');
-  menu.className = 'context-menu';
-  menu.style.top = `${event.clientY}px`;
-  menu.style.left = `${event.clientX}px`;
+  if (slideshowImages.length === 0) {
+    alert('No hay imágenes para la presentación');
+    return;
+  }
 
-  menu.innerHTML = `
-    <button onclick="abrirDocumento('${documentoId}', '${proyectoId}')">
-      👁️ Abrir
-    </button>
-    <button onclick="descargarDocumento('${documentoId}', '${proyectoId}')">
-      ⬇️ Descargar
-    </button>
-    <hr>
-    <button onclick="eliminarDocumento('${documentoId}', '${proyectoId}')" style="color: var(--color-peligro);">
-      🗑️ Eliminar
-    </button>
-  `;
+  slideshowIndex = 0;
 
-  document.body.appendChild(menu);
+  // Crear modal de slideshow si no existe
+  let modal = document.getElementById('slideshowModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'slideshowModal';
+    modal.className = 'modal-overlay active';
+    document.body.appendChild(modal);
+  }
 
-  setTimeout(() => {
-    document.addEventListener('click', function cerrarMenu() {
-      menu.remove();
-      document.removeEventListener('click', cerrarMenu);
-    });
-  }, 10);
+  modal.innerHTML = `
+        <div class="modal-container" style="max-width: 90vw; height: 90vh; display: flex; flex-direction: column;">
+            <div style="flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #000;">
+                <img id="slideshowImage" src="" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+            </div>
+            <div style="padding: 1rem; background: #fff; display: flex; justify-content: space-between; align-items: center;">
+                <h4 id="slideshowTitle" style="margin: 0;"></h4>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-secondary" onclick="prevSlide()">←</button>
+                    <button class="btn btn-secondary" onclick="toggleSlideshow()" id="btnPlayPause">⏸</button>
+                    <button class="btn btn-secondary" onclick="nextSlide()">→</button>
+                    <button class="btn btn-danger" onclick="cerrarSlideshow()">Salir</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+  actualizarSlide();
+  slideshowInterval = setInterval(nextSlide, 3000);
+}
+
+function actualizarSlide() {
+  const img = document.getElementById('slideshowImage');
+  const title = document.getElementById('slideshowTitle');
+  const doc = slideshowImages[slideshowIndex];
+
+  if (img && doc) {
+    img.src = `file://${doc.ruta}`;
+    title.textContent = `${doc.nombre} (${slideshowIndex + 1}/${slideshowImages.length})`;
+  }
+}
+
+function nextSlide() {
+  slideshowIndex = (slideshowIndex + 1) % slideshowImages.length;
+  actualizarSlide();
+}
+
+function prevSlide() {
+  slideshowIndex = (slideshowIndex - 1 + slideshowImages.length) % slideshowImages.length;
+  actualizarSlide();
+}
+
+function toggleSlideshow() {
+  const btn = document.getElementById('btnPlayPause');
+  if (slideshowInterval) {
+    clearInterval(slideshowInterval);
+    slideshowInterval = null;
+    if (btn) btn.textContent = '▶';
+  } else {
+    slideshowInterval = setInterval(nextSlide, 3000);
+    if (btn) btn.textContent = '⏸';
+  }
+}
+
+function cerrarSlideshow() {
+  if (slideshowInterval) clearInterval(slideshowInterval);
+  const modal = document.getElementById('slideshowModal');
+  if (modal) modal.remove();
+}
+
+// ==================== LOGICA PRINCIPAL ====================
+
+async function cargarDocumentos() {
+  try {
+    const docs = await window.documentAPI.obtenerDocumentos(null);
+    documentState.documents = docs;
+    renderizarDocumentos();
+    actualizarContador();
+  } catch (error) {
+    console.error('Error cargando documentos:', error);
+  }
+}
+
+function renderizarDocumentos() {
+  const container = document.getElementById('documentosContainer');
+  const docs = filtrarDocumentos(documentState.documents);
+
+  if (docs.length === 0) {
+    container.innerHTML = `
+            <div class="estado-vacio">
+                <div class="estado-vacio-icon">📭</div>
+                <h3>No hay documentos</h3>
+                <p>Sube tu primer archivo o ajusta los filtros</p>
+            </div>
+        `;
+    return;
+  }
+
+  if (documentState.viewMode === 'grid') {
+    renderGrid(docs, container);
+  } else {
+    renderList(docs, container);
+  }
+}
+
+function renderGrid(docs, container) {
+  container.innerHTML = `
+        <div class="documentos-grid">
+            ${docs.map(doc => crearTarjetaDocumento(doc)).join('')}
+        </div>
+    `;
+}
+
+function renderList(docs, container) {
+  container.innerHTML = `
+        <div class="documentos-list">
+            <table class="documentos-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Tamaño</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${docs.map(doc => crearFilaDocumento(doc)).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+function crearTarjetaDocumento(doc) {
+  const icon = obtenerIconoArchivo(doc.tipo);
+  const size = formatearTamano(doc.tamanio);
+  const date = new Date(doc.fecha_subida).toLocaleDateString();
+  const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].includes(doc.tipo.toLowerCase());
+
+  // Para imágenes usamos su propia ruta, para PDFs un icono grande
+  const previewContent = isImage
+    ? `<img src="file://${doc.ruta}" class="documento-thumb" alt="${doc.nombre}" loading="lazy">`
+    : `<div class="documento-icon">${icon}</div>`;
+
+  return `
+        <div class="documento-card" onclick="seleccionarDocumento('${doc.id}')" ondblclick="abrirDocumento('${doc.id}')">
+            ${doc.version > 1 ? `<span class="version-badge">v${doc.version}</span>` : ''}
+            <div class="documento-preview ${isImage ? 'has-image' : ''}">
+                ${previewContent}
+            </div>
+            <div class="documento-info">
+                <div class="documento-nombre" title="${doc.nombre}">${doc.nombre}</div>
+                <div class="documento-meta">
+                    <span class="meta-item">📅 ${date}</span>
+                    <span class="meta-item">📦 ${size}</span>
+                </div>
+            </div>
+            <div class="documento-acciones">
+                <button class="btn-icon-small" onclick="event.stopPropagation(); abrirDocumento('${doc.id}')" title="Ver">
+                    👁️
+                </button>
+                <button class="btn-icon-small" onclick="event.stopPropagation(); verVersiones('${doc.id}')" title="Versiones">
+                    🕒
+                </button>
+                <button class="btn-icon-small" onclick="event.stopPropagation(); confirmarEliminar('${doc.id}')" title="Eliminar">
+                    🗑️
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function crearFilaDocumento(doc) {
+  const icon = obtenerIconoArchivo(doc.tipo);
+  const size = formatearTamano(doc.tamanio);
+  const date = new Date(doc.fecha_subida).toLocaleDateString();
+
+  return `
+        <tr class="documento-row" onclick="seleccionarDocumento('${doc.id}')" ondblclick="abrirDocumento('${doc.id}')">
+            <td class="documento-nombre-cell">
+                <span class="documento-icon-small">${icon}</span>
+                ${doc.nombre}
+                ${doc.version > 1 ? `<span class="version-badge-small">v${doc.version}</span>` : ''}
+            </td>
+            <td>${doc.tipo.toUpperCase()}</td>
+            <td>${size}</td>
+            <td>${date}</td>
+            <td class="acciones-cell">
+                <button class="btn-icon-small" onclick="event.stopPropagation(); abrirDocumento('${doc.id}')">👁️</button>
+                <button class="btn-icon-small" onclick="event.stopPropagation(); verVersiones('${doc.id}')">🕒</button>
+                <button class="btn-icon-small" style="color: var(--danger-color);" onclick="event.stopPropagation(); confirmarEliminar('${doc.id}')">🗑️</button>
+            </td>
+        </tr>
+    `;
+}
+
+// ==================== DRAG & DROP & UPLOAD ====================
+
+function setupDragAndDrop() {
+  const dropZone = document.getElementById('dropZone');
+  if (!dropZone) return;
+
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, preventDefaults, false);
+  });
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  dropZone.addEventListener('dragenter', () => dropZone.classList.add('drag-active'), false);
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-active'), false);
+  dropZone.addEventListener('drop', handleDrop, false);
+
+  dropZone.addEventListener('click', async () => {
+    const result = await window.documentAPI.selectMultipleFiles();
+    if (result.success) {
+      prepararSubidaBatch(result.files);
+    }
+  });
+}
+
+function handleDrop(e) {
+  const dt = e.dataTransfer;
+  const files = dt.files;
+
+  document.getElementById('dropZone').classList.remove('drag-active');
+
+  const validFiles = [];
+  const errors = [];
+
+  Array.from(files).forEach(f => {
+    const validation = validateDoc(f);
+    if (validation.valid) {
+      validFiles.push({
+        path: f.path,
+        name: f.name,
+        size: f.size
+      });
+    } else {
+      errors.push(`${f.name}: ${validation.error}`);
+    }
+  });
+
+  if (errors.length > 0) {
+    alert(`Algunos archivos no se pudieron agregar:\n${errors.join('\n')}`);
+  }
+
+  if (validFiles.length > 0) {
+    prepararSubidaBatch(validFiles);
+  }
+}
+
+function validateDoc(file) {
+  const ext = file.name.split('.').pop().toLowerCase();
+
+  // Check blocked extensions
+  if (BLOCKED_EXTENSIONS.includes(ext)) {
+    return { valid: false, error: 'Tipo de archivo no permitido por seguridad' };
+  }
+
+  // Check size
+  if (file.size > MAX_DOC_SIZE) {
+    return { valid: false, error: 'Excede el tamaño máximo (200MB)' };
+  }
+
+  // Check duplicates in queue
+  const isDuplicateQueue = colaSubida.some(item => item.path === file.path);
+  if (isDuplicateQueue) {
+    return { valid: false, error: 'Ya está en la cola de subida' };
+  }
+
+  return { valid: true };
+}
+
+let colaSubida = [];
+
+function prepararSubidaBatch(files) {
+  colaSubida = [...colaSubida, ...files.map(f => ({
+    ...f,
+    status: 'pending',
+    proyecto_id: 'general'
+  }))];
+
+  actualizarListaBatch();
+  document.getElementById('uploadModal').classList.add('active');
+}
+
+function actualizarListaBatch() {
+  const list = document.getElementById('uploadBatchList');
+  list.innerHTML = colaSubida.map((file, index) => `
+        <div class="upload-batch-item">
+            <div class="batch-item-icon">📄</div>
+            <div class="batch-item-info">
+                <strong>${file.name}</strong>
+                <span>${formatearTamano(file.size)}</span>
+            </div>
+            <div class="batch-item-status ${file.status === 'success' ? 'status-success' : ''}">
+                ${file.status}
+            </div>
+            ${file.status === 'pending' ? `
+                <button class="btn-icon-small" onclick="removerDeCola(${index})">×</button>
+            ` : ''}
+        </div>
+    `).join('');
+
+  if (colaSubida.length > 0) {
+    list.insertAdjacentHTML('beforeend', `
+            <div style="text-align: right; margin-top: 0.5rem;">
+                <button class="btn btn-sm btn-danger" onclick="limpiarCola()">🗑️ Limpiar Todo</button>
+            </div>
+        `);
+  }
+}
+
+async function iniciarSubidaBatch() {
+  for (let i = 0; i < colaSubida.length; i++) {
+    if (colaSubida[i].status !== 'pending') continue;
+
+    colaSubida[i].status = 'uploading';
+    actualizarListaBatch();
+
+    try {
+      const result = await window.documentAPI.add({
+        ruta: colaSubida[i].path,
+        nombre: colaSubida[i].name,
+        proyecto_id: 'general',
+        tipo: 'documento',
+        notas: 'Subido desde UI'
+      });
+
+      if (result.success) {
+        colaSubida[i].status = 'success';
+      } else {
+        colaSubida[i].status = 'error';
+        console.error(result.error);
+      }
+    } catch (error) {
+      colaSubida[i].status = 'error';
+    }
+    actualizarListaBatch();
+  }
+
+  await cargarEstadisticas();
+  await cargarDocumentos();
+}
+
+function cerrarModalSubida() {
+  document.getElementById('uploadModal').classList.remove('active');
+  colaSubida = [];
+}
+
+function abrirModalSubida() {
+  document.getElementById('dropZone').click();
+}
+
+function removerDeCola(index) {
+  colaSubida.splice(index, 1);
+  actualizarListaBatch();
+}
+
+function limpiarCola() {
+  colaSubida = [];
+  actualizarListaBatch();
 }
 
 // ==================== UTILIDADES ====================
 
-function obtenerIconoDocumento(tipo) {
+async function cargarEstadisticas() {
+  try {
+    const stats = await window.documentAPI.getStatistics();
+    if (stats.success) {
+      const data = stats.data;
+      const grid = document.getElementById('statsGrid');
+      if (grid) {
+        grid.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-icon">📄</div>
+                        <div class="stat-info">
+                            <div class="stat-value">${data.count}</div>
+                            <div class="stat-label">Total Documentos</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💾</div>
+                        <div class="stat-info">
+                            <div class="stat-value">${data.totalSizeMB} MB</div>
+                            <div class="stat-label">Espacio Usado</div>
+                        </div>
+                    </div>
+                `;
+      }
+    }
+  } catch (error) {
+    console.error('Error cargando estadísticas', error);
+  }
+}
+
+function obtenerIconoArchivo(tipo) {
   const iconos = {
-    'AVISO_FUNCIONAMIENTO': '📋',
-    'PERMISO_IMPACTO_ZONAL': '📜',
-    'POLIZA_SEGURO': '🛡️',
-    'DICTAMEN_TECNICO': '🔧',
-    'PROGRAMA_INTERNO': '🚨',
-    'PDF': '📄',
-    'IMAGEN': '🖼️',
-    'OTRO': '📄'
+    'pdf': '📕',
+    'doc': '📘', 'docx': '📘',
+    'xls': '📗', 'xlsx': '📗',
+    'jpg': '🖼️', 'png': '🖼️', 'gif': '🖼️',
+    'zip': '📦', 'txt': '📝'
   };
   return iconos[tipo] || '📄';
 }
 
-function formatearTipoDocumento(tipo) {
-  const nombres = {
-    'AVISO_FUNCIONAMIENTO': 'Aviso de Funcionamiento',
-    'PERMISO_IMPACTO_ZONAL': 'Permiso de Impacto Zonal',
-    'POLIZA_SEGURO': 'Póliza de Seguro',
-    'DICTAMEN_TECNICO': 'Dictamen Técnico',
-    'PROGRAMA_INTERNO': 'Programa Interno de PC',
-    'OTRO': 'Otro Documento'
-  };
-  return nombres[tipo] || tipo;
-}
-
 function formatearTamano(bytes) {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) return '0 B';
   const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
-function formatearFecha(fecha) {
-  if (!fecha) return 'N/A';
-  const d = new Date(fecha + 'T00:00:00');
-  return d.toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' });
+function filtrarDocumentos(docs) {
+  const query = documentState.searchQuery.toLowerCase();
+  const filter = documentState.filter;
+
+  return docs.filter(doc => {
+    const matchesSearch = doc.nombre.toLowerCase().includes(query);
+    let matchesFilter = true;
+
+    if (filter !== 'todos') {
+      if (filter === 'imagen') {
+        matchesFilter = ['jpg', 'jpeg', 'png', 'gif'].includes(doc.tipo);
+      } else if (filter === 'office') {
+        matchesFilter = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(doc.tipo);
+      } else {
+        matchesFilter = doc.tipo === filter;
+      }
+    }
+
+    return matchesSearch && matchesFilter;
+  });
 }
 
-function cerrarModal(modalId) {
-  const modal = document.getElementById(modalId);
-  if (modal) {
-    modal.classList.remove('active');
-    setTimeout(() => modal.remove(), 300);
+function handleSearch(query) {
+  documentState.searchQuery = query;
+  renderizarDocumentos();
+}
+
+function handleFilter(filter) {
+  documentState.filter = filter;
+  renderizarDocumentos();
+}
+
+function cambiarVista(mode) {
+  documentState.viewMode = mode;
+  renderizarDocumentos();
+}
+
+function actualizarContador() {
+  const el = document.getElementById('docCount');
+  if (el) el.textContent = `${documentState.documents.length} documentos`;
+}
+
+async function confirmarEliminar(id) {
+  if (confirm('¿Estás seguro de eliminar este documento?')) {
+    const doc = documentState.documents.find(d => d.id === id);
+    if (doc) {
+      await window.documentAPI.delete({ documentId: id, documentPath: doc.ruta });
+      await cargarDocumentos();
+      await cargarEstadisticas();
+    }
   }
 }
+
+// Global functions for HTML access
+window.mostrarDocumentos = mostrarDocumentos;
+window.iniciarSlideshow = iniciarSlideshow;
+window.abrirGaleriaImagenes = abrirGaleriaImagenes;
+window.abrirModalSubida = abrirModalSubida;
+window.cerrarModalSubida = cerrarModalSubida;
+window.iniciarSubidaBatch = iniciarSubidaBatch;
+window.cambiarVista = cambiarVista;
+window.handleSearch = handleSearch;
+window.handleFilter = handleFilter;
+window.removerDeCola = removerDeCola;
+window.limpiarCola = limpiarCola;
